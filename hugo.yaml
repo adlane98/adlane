@@ -1,3 +1,761 @@
-baseURL: https://example.org/
-languageCode: en-us
-title: My New Hugo Site
+baseURL: ""
+theme: hugo-profile
+
+defaultContentLanguage: en
+defaultContentLanguageInSubdir: true
+
+languages: 
+    en:
+      contentDir: content
+      disabled: false
+      languageCode: en-GB
+      languageDirection: ltr
+      languageName: English
+      weight: 1
+  
+      title: "Adlane's profile"
+      
+      params:
+        title: "Adlane"
+        description: Text about my cool site
+        # staticPath: ""  # The path to serve the static files from
+        favicon: "/fav.png"
+      
+        # Whether to serve bootstrap css and js files from CDN or not. Can be set to true, "css" or "js" to choose between
+        # serving both, only the css, or only the js files through the CDN. Any other value will make so that CDN is not used.
+        # Note the lack of "" in true, it should be of boolean type.
+        useBootstrapCDN: false
+      
+        # If you want to load dynamically responsive images from Cloudinary
+        # This requires your images to be uploaded + hosted on Cloudinary
+        # Uncomment and change YOUR_CLOUD_NAME to the Cloud Name in your Cloudinary console
+        # cloudinary_cloud_name: "YOUR_CLOUD_NAME"
+        
+        # Whether to add mathjax support on all pages. Alternatively, you can opt-in per page by adding `mathjax: true` in the frontmatter.
+        mathjax: false
+      
+        # Whether the fade animations on the home page will be enabled
+        animate: true
+      
+        theme:
+          # disableThemeToggle: true
+          # defaultTheme: "light" # dark
+      
+        font:
+          fontSize: 1rem # default: 1rem
+          fontWeight: 400 # default: 400
+          lineHeight: 1.5 # default: 1.5
+          textAlign: left # default: left
+      
+        # color preference
+        color:
+          primaryColor: lightseagreen
+        #   textColor: lightseagreen
+        #   backgroundColor:
+        #   secondaryBackgroundColor:
+        #   primaryColor:
+        #   secondaryTextColor:
+      
+          darkmode:
+            primaryColor: lightseagreen
+      
+            #     textColor:
+            #     secondaryTextColor: 4d0099
+            #     backgroundColor:
+            #     secondaryBackgroundColor:
+            #     secondaryColor:
+      
+        # If you want to customize the menu, you can change it here
+        navbar:
+          align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
+          # brandLogo: "/logo.png" # Logo for the brand | default is the favicon variable
+          showBrandLogo: false # Show brand logo in nav bar | default is true
+          brandName: "Adlane" # Brand name for the brand | default is the title variable
+          disableSearch: true
+          # searchPlaceholder: "Search"
+          stickyNavBar:
+            enable : true
+            showOnScrollUp : true
+          menus:
+            disableAbout: false
+            disableExperience: false
+            disableEducation: false
+            disableProjects: false
+            disableAchievements: false
+            disableContact: false
+      
+        # Hero
+        hero:
+          enable: true
+          intro: "Hi, I'm "
+          title: "Adlane."
+          subtitle: "I teach machines to help us see."
+          content: "I'm a passionate deep learning engineer. I leverage advanced AI and computer vision technologies to develop systems that enhance visual understanding and interaction."
+          image: /images/pdp.jpeg
+          bottomImage:
+            enable: true
+          # roundImage: true # Make hero image circular | default false
+          button:
+            enable: true
+            name: "Resume"
+            url: "/resume.pdf"
+            download: true
+            newPage: false
+          socialLinks:
+            fontAwesomeIcons:
+              - icon: fab fa-github
+                url: https://github.com/adlane98
+              - icon: fab fa-linkedin
+                url: https://www.linkedin.com/in/adlane-ladjal/
+              - icon: fab fa-instagram
+                url: https://instagram.com/shotsbyadlane
+              - icon: fab fa-x-twitter
+                url: https://twitter.com/adlaneladjal
+            
+        # About
+        about:
+          enable: true
+          title: "About Me"
+          image: "/images/pdp2.jpeg"
+          content: |-
+            I am an AI engineer with a strong foundation in computer science engineering, further honed by a specialized year-long focus on artificial intelligence.
+                                                                                                                                                                    
+            My expertise lies in computer vision, particularly in areas such as instance segmentation, object detection, and super-resolution. I am constantly on the lookout for new state-of-the-art models to integrate into both my professional work and personal projects.
+          
+          skills:
+            enable: true
+            title: "Here are a few technologies I've been working with recently:"
+            items:
+              - "Python"
+              - "PyTorch"
+              - "C++"
+              - "CUDA"
+              - "OpenCV"
+          content2: |-
+            Over the years, alongside my technical development, I have cultivated a deep passion for photography, which not only complements my skills but also enriches my understanding of visual aesthetics and image composition.
+            Take a look to my photographic journey on my [portfolio](https://shotsby.adlane.me) or on my [Instagram](https://instagram.com/shotsbyadlane).
+      
+        # Experience
+        experience:
+          enable: true
+          # title: "Custom Name"
+          items:
+            - job: "Deep Learning & Image Processing Engineer"
+              company: "Smiths Detection"
+              companyUrl: "https://www.smithsdetection.com/"
+              date: "Feb 2022 - present"
+              location: "Paris area"
+              info:
+                enable: false
+              featuredLink:
+                enable: false
+                name: ""
+                url: ""
+              content: |
+                Currently in charge of several projects at [Smiths Detection](https://www.smithsdetection.com/) in Paris area, including:
+                - Threats detection.
+                - Image visualisation enhancement (denoising, super-resolution).
+                - Algorithm optimization leveraging GPU.
+                
+                Stack: Python, PyTorch, ONNX, C++, CUDA
+      
+            - job: "Data Scientist"
+              company: "Sogeti"
+              companyUrl: "https://labs.sogeti.com/about/"
+              date: "April 2021 - Sep 2021"
+              location: "Paris area"
+              featuredLink:
+                enable: false
+                url: ""
+              info:
+                enable: false
+                content: 
+              content: |
+                I developed deep learning models for damage detection on damaged vehicles using [MMDetection](https://github.com/open-mmlab/mmdetection) library.
+      
+                - Writing SOTA report.
+                - Implementation of [Hybride Task Cascade](https://arxiv.org/abs/1901.07518) model.
+                - Data management.
+                - Training and testing.
+                
+                Stack: Python, PyTorch, MMDetection
+      
+            - job: "Python Developer"
+              company: "Caciis"
+              companyUrl: "https://caciis.com/"
+              date: "Feb 2020 - Aug 2020"
+              location: "Paris"
+              info:
+                enable: false
+              featuredLink:
+                enable: false
+                url: ""
+              content: |
+                I took part in the development of a Python-based tool allowing migration of RedBack routers' configuration to Cisco routers.
+                I carried out several audit on both manufacturers' routers.
+                
+                Stack: Python, Django
+      
+            - job: "Data Engineer"
+              company: "Cegid Talentsoft"
+              companyUrl: "https://www.cegid.com/fr/produits/cegid-talentsoft/"
+              date: "June 2019 - Aug 2019"
+              location: "Paris area"
+              info:
+                enable: false
+              featuredLink:
+                enable: false
+                url: ""
+              content: |
+                At Talentsoft I achieved two missions:
+                - I was responsible of adding the widget translation of the Talentsoft tool's landing page.
+                - I made a POC to improve the performance of the textual searches performed on the database. I was also responsible of the data migration from MS SQL server to Elasticserch.
+                
+                Stack: C#/.NET, Typescript, MS SQL Server, Elasticserch
+      
+        # Education
+        education:
+          enable: true
+          # title: "Custom Name"
+          index: false
+          items:
+            - title: "Master of Science - Artificial Intelligence and Pattern Recognition"
+              school:
+                name: "Université Toulouse III - Paul Sabatier"
+                url: "https://www.univ-tlse3.fr/"
+              date: "2020 - 2021"
+              content: |-
+                I took one year to specialize myself in Machine Learning and, particularly, in Deep Learning. This program equipped me with solid foundations in both theoretical concepts and practical applications.
+                I focused extensively on image acquisition and processing techniques.
+                Additionally, I acquired foundational knowledge in robotics, enhancing my interdisciplinary skills in AI technologies.
+                
+            - title: "Exchange student"
+              school:
+                name: "Université de Sherbrooke, Canada"
+                url: "https://www.usherbrooke.ca/"
+              date: "2019"
+              content: |-
+                During one semester, I participated in an exchange program at Université de Sherbrooke, where I acquired foundational knowledge in Data Science and Machine Learning. I also discovered new fields in computer science such as cognitive computing and IoT.
+                
+              featuredLink:
+                enable: false
+                name: ""
+                url: ""
+            - title: "Computer Science Engineering"
+              school:
+                name: "Sup Galilée, Université Sorbonne Paris Nord"
+                url: "https://www.sup-galilee.univ-paris13.fr/"
+              date: "2015 - 2020"
+              content: |-
+                During this 5-year program, I acquired a strong foundation in general computer science, including web and software development. The program emphasized significant mathematical components, particularly in algorithm complexity calculation. Additionally, detailed hardware knowledge was gained through courses such as Computer Architecture.
+              featuredLink:
+                enable: false
+                url: ""
+      
+        # Achievements
+        achievements:
+          enable: true
+          # title: "Custom Name"
+          items:
+            - title: 2-day CUDA course
+              content: Foundation of CUDA programming, profiling and debugging
+              image: /images/cuda.png
+            - title: Sogeti Labs Hackaton Jury Prize
+              content: Developed ML models to detect people in overindebtedness
+              image: /images/sogeti.png
+      
+        # projects
+        projects:
+          enable: true
+          # title: "Custom Name"
+          items:
+            - title: Twibot
+              content: A bot playing Twinit, a game where we want to match two identical cards. I used a small YOLO model to spot cards, and keypoints matching to match cards.
+              image: /images/twibot.png
+              badges:
+                - "Python"
+                - "PyTorch"
+                - "OpenCV"
+              links:
+                - icon: fab fa-github
+                  url: https://github.com/adlane98/twibot
+                  
+            - title: Super-resolution methods for brain magnetic resonance images
+              content: With my team we implemented three different neural networks to super-resolve brain MRI of marmoset, the world smallest primate.
+              image: /images/srm4bmri.png
+              badges:
+                - "Python"
+                - "Tensorflow"
+              links:
+                - icon: fab fa-github
+                  url: https://github.com/adlane98/SRM4BMRI/tree/main
+      
+            - title: Scala implementation of UMAP
+              content: We contribute to Clustering4Ever, a Scala library, by providing an implementation of Uniform Manifold Approximation and Projection (UMAP).
+              image: /images/umap.png
+              # featured:
+              #  name: UMAP paper
+              #  link: https://arxiv.org/abs/1802.03426
+              badges:
+                - "Scala"
+                - "Python"
+              links:
+                - icon: fab fa-github
+                  url: https://github.com/Clustering4Ever/Clustering4Ever
+      
+        #Contact
+        contact:
+          enable: true
+          # title: "Custom Name"
+          content: My inbox is always open. Whether you have a question or just want to say hi, I’ll try my best to get back to you!
+          btnName: Mail me
+          btnLink: mailto:ladjal.adlane@gmail.com
+          # formspree:
+          #   enable: true # `contact.email` value will be ignored
+          #   formId: abcdefgh # Take it from your form's endpoint, like 'https://formspree.io/f/abcdefgh'
+          #   emailCaption: "Enter your email address"
+          #   messageCaption: "Enter your message here"
+      
+        footer:
+          recentPosts:
+            path: "blogs"
+            count: 3
+            title: Recent Posts
+            enable: true
+            disableFeaturedImage: false
+          # socialNetworks:
+          #  github: https://github.com/adlane98
+          #  linkedin: https://www.linkedin.com/in/adlane-ladjal
+          #  instagram: https://www.instagram.com/shotsbyadlane
+          #  twitter: https://x.com/adlaneladjal
+
+        # List pages like blogs and posts
+        listPages:
+          disableFeaturedImage: false
+      
+        # Single pages like blog and post
+        singlePages:
+          readTime:
+            enable: true
+            content: "min read"
+          scrollprogress:
+            enable: true
+      
+        # For translations
+        terms:
+          read: "Read"
+          toc: "Table Of Contents"
+          copyright: "All rights reserved"
+          pageNotFound: "Page not found"
+          emailText: "Check out this site"
+      
+        datesFormat:
+          article: "Jan 2, 2006"
+          articleList: "Jan 2, 2006"
+          articleRecent: "Jan 2, 2006"
+      
+        #customScripts: -| # You can add custom scripts which will be added before </body> tag
+        #  <script type="text/javascript"><!-- any script here --></script>  
+  
+    fr:
+      contentDir: content
+      disabled: false
+      languageCode: fr-FR
+      languageDirection: ltr
+      languageName: Français
+      weight: 2
+    
+      title: "Adlane"
+    
+      params:
+        title: "Adlane"
+        description: Text about my cool site
+        # staticPath: ""  # The path to serve the static files from
+        favicon: "/fav.png"
+      
+        # Whether to serve bootstrap css and js files from CDN or not. Can be set to true, "css" or "js" to choose between
+        # serving both, only the css, or only the js files through the CDN. Any other value will make so that CDN is not used.
+        # Note the lack of "" in true, it should be of boolean type.
+        useBootstrapCDN: false
+      
+        # If you want to load dynamically responsive images from Cloudinary
+        # This requires your images to be uploaded + hosted on Cloudinary
+        # Uncomment and change YOUR_CLOUD_NAME to the Cloud Name in your Cloudinary console
+        # cloudinary_cloud_name: "YOUR_CLOUD_NAME"
+        
+        # Whether to add mathjax support on all pages. Alternatively, you can opt-in per page by adding `mathjax: true` in the frontmatter.
+        mathjax: false
+      
+        # Whether the fade animations on the home page will be enabled
+        animate: true
+      
+        theme:
+          # disableThemeToggle: true
+          # defaultTheme: "light" # dark
+      
+        font:
+          fontSize: 1rem # default: 1rem
+          fontWeight: 400 # default: 400
+          lineHeight: 1.5 # default: 1.5
+          textAlign: left # default: left
+      
+        # color preference
+        color:
+          primaryColor: lightseagreen
+        #   textColor: lightseagreen
+        #   backgroundColor:
+        #   secondaryBackgroundColor:
+        #   primaryColor:
+        #   secondaryTextColor:
+      
+          darkmode:
+            primaryColor: lightseagreen
+      
+            #     textColor:
+            #     secondaryTextColor: 4d0099
+            #     backgroundColor:
+            #     secondaryBackgroundColor:
+            #     secondaryColor:
+      
+        # If you want to customize the menu, you can change it here
+        navbar:
+          align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
+          # brandLogo: "/logo.png" # Logo for the brand | default is the favicon variable
+          showBrandLogo: false # Show brand logo in nav bar | default is true
+          brandName: "Adlane" # Brand name for the brand | default is the title variable
+          disableSearch: true
+          # searchPlaceholder: "Search"
+          stickyNavBar:
+            enable : true
+            showOnScrollUp : true
+          menus:
+            disableAbout: false
+            disableExperience: false
+            disableEducation: false
+            disableProjects: false
+            disableAchievements: false
+            disableContact: false
+      
+        # Hero
+        hero:
+          enable: true
+          intro: "Bonjour, je m'appelle "
+          title: "Adlane."
+          subtitle: "Créateur d'IA visuelles innovantes."
+          content: "Ingénieur en Deep Learning, j'utilise des technologies avancées d'IA et de vision par ordinateur pour développer des systèmes qui améliorent la compréhension visuelle d'images de toutes sortes."
+          image: /images/pdp.jpeg
+          bottomImage:
+            enable: true
+          # roundImage: true # Make hero image circular | default false
+          button:
+            enable: true
+            name: "CV"
+            url: "/cv.pdf"
+            download: true
+            newPage: false
+          socialLinks:
+            fontAwesomeIcons:
+              - icon: fab fa-github
+                url: https://github.com/adlane98
+              - icon: fab fa-linkedin
+                url: https://www.linkedin.com/in/adlane-ladjal/
+              - icon: fab fa-instagram
+                url: https://instagram.com/shotsbyadlane
+              - icon: fab fa-x-twitter
+                url: https://twitter.com/adlaneladjal
+      
+        # About
+        about:
+          enable: true
+          title: "Qui suis-je ?"
+          image: "/images/pdp2.jpeg"
+          content: |-
+            Je suis ingénieur en IA avec une solide formation en génie informatique, enrichie par une année de spécialisation dédiée à l'intelligence artificielle.
+      
+            Mon expertise se concentre principalement sur la vision par ordinateur, notamment dans des domaines tels que la segmentation d'instances, la détection d'objets et la super-résolution. Je suis constamment à l'affût de nouveaux modèles de pointe à intégrer tant dans mon travail professionnel que dans mes projets personnels.
+          skills:
+            enable: true
+            title: "Quelques technologies avec lesquelles j'ai travaillé récemment :"
+            items:
+              - "Python"
+              - "PyTorch"
+              - "C++"
+              - "CUDA"
+              - "OpenCV"
+          content2: |-
+            Au fil des années, en parallèle de mon développement technique, j'ai cultivé une passion profonde pour la photographie, qui non seulement complète mes compétences, mais enrichit également ma compréhension de l'esthétique visuelle et de la composition d'images.
+            Découvrez mon parcours photographique sur mon [portfolio](http://shotsby.adlane.me) ou sur mon [Instagram](https://instagram.com/shotsbyadlane).
+        # Experience
+        experience:
+          enable: true
+          title: "Expériences"
+          items:
+            - job: "Ingénieur Deep Learning & Traitement d'images"
+              company: "Smiths Detection"
+              companyUrl: "https://www.smithsdetection.com/"
+              date: "Fév 2022 - aujourd'hui"
+              location: "Région parisienne"
+              info:
+                enable: false
+              featuredLink:
+                enable: false
+                name: ""
+                url: ""
+              content: |
+                Je suis responsable de plusieurs projets chez [Smiths Detection](https://www.smithsdetection.com/) en région parisienne :
+                - Détection de menaces.
+                - Amélioration de la qualité d'images (débruitage, super-résolution).
+                - Optimisation d'algorithmes de traitement d'images via GPU.
+                
+                Stack: Python, PyTorch, ONNX, C++, CUDA
+      
+            - job: "Data Scientist"
+              company: "Sogeti"
+              companyUrl: "https://labs.sogeti.com/about/"
+              date: "Avril 2021 - Sep 2021"
+              location: "Région parisienne"
+              featuredLink:
+                enable: false
+                url: ""
+              info:
+                enable: false
+                content: 
+              content: |
+                J'ai développé des modèles de Deep Learning pour la détéction de domages sur des véhicules accidentés en utilisant la bibliothèque [MMDetection](https://github.com/open-mmlab/mmdetection).
+      
+                - Ecriture d'un rapport d'état de l'art.
+                - Implémentation du modèle [Hybride Task Cascade](https://arxiv.org/abs/1901.07518) model.
+                - Gestion des données.
+                - Entraînement et test du modèle.
+                
+                Stack: Python, PyTorch, MMDetection
+      
+            - job: "Développeur Python"
+              company: "Caciis"
+              companyUrl: "https://caciis.com/"
+              date: "Fév 2020 - Août 2020"
+              location: "Paris"
+              info:
+                enable: false
+              featuredLink:
+                enable: false
+                url: ""
+              content: |
+                J'ai pris part au développement d'un outil Python pour faciliter la traduction de la configuration de routeurs RedBack, vers la configuration de routeurs.
+                J'ai mené plusieurs audits sur les deux types de routeurs.
+                
+                Stack: Python, Django
+      
+            - job: "Data Engineer"
+              company: "Cegid Talentsoft"
+              companyUrl: "https://example.com"
+              date: "Juin 2019 - Août 2019"
+              location: "Région parisienne"
+              info:
+                enable: false
+              featuredLink:
+                enable: false
+                url: ""
+              content: |
+                J'ai été en charge de deux missions chez Talentsoft :
+                - J'ai été responsable d'ajouter la fonctionnalité de traduction des widgets de la landing page du produit principal de Talentsoft.
+                - J'ai réalisé un POC pour améliorer les performances de la recherche full-text sur la base de données. J'étais responsable de la migration des données de MS SQL server vers Elasticserch.
+                
+                Stack: C#/.NET, Typescript, MS SQL Server, Elasticserch
+      
+        # Education
+        education:
+          enable: true
+          title: "Formation"
+          index: false
+          items:
+            - title: "Master 2 - Intelligence Artificielle et Reconnaissance des Formes"
+              school:
+                name: "Université Toulouse III - Paul Sabatier"
+                url: "https://www.univ-tlse3.fr/"
+              date: "2020 - 2021"
+              content: |-
+                J'ai complété ma formation d'ingénieur informatique par une année de spécialisation en Intelligence Artificielle et plus particulièrement en Deep Learning. Cela m'a permis d'approfondir mes compétences dans ce domaine que ce soit dans les concepts théoriques ou pratiques. 
+                Puis j'ai orienté ma spécialisation dans les techniques de computer vision et de traitement d'images.
+                Aussi la formation m'a apporté quelques notions de robotiques qui permettent d'étendre mon champ de compétences.
+                
+            - title: "Echange universitaire"
+              school:
+                name: "Université de Sherbrooke, Canada"
+                url: "https://www.usherbrooke.ca/"
+              date: "2019"
+              content: |-
+                Pendant un semestre j'ai eu la chance de béneficier d'un programme d'échange universitaire à l'Université de Sherbrooke, où j'ai acquis de solides bases en science des données, ou encore en Machine Learning.  J'ai aussi découvert de nouveaux domaines très intéressant durant cette période, comme l'informatique cognitive ou encore l'IoT.
+              featuredLink:
+                enable: false
+                name: ""
+                url: ""
+            - title: "Ingénierie informatique"
+              school:
+                name: "Sup Galilée, Université Sorbonne Paris Nord"
+                url: "https://www.sup-galilee.univ-paris13.fr/"
+              date: "2015 - 2020"
+              content: |-
+                Pendant cette formation de cinq ans, j'ai assimilé at approfondis les bases de l'informatique générale, comme par exemple développement web ou logiciel. La formation a particulièrement mis l'accent sur la théorie mathématique qui se cache derrière l'informatique, notamment en calcul de compléxité et algortihmie. Aussi nous avons vu en détail comment fonctionne un ordinateur du côté de l'hardware via le cours d'Architecture des Ordinateurs.
+              featuredLink:
+                enable: false
+                url: ""
+      
+        # Achievements
+        achievements:
+          enable: true
+          title: "Réalisations"
+          items:
+            - title: Formation CUDA sur 2 jours
+              content: Bases de la programmation CUDA, du profiling et du déboggage.
+              image: /images/cuda.png
+            - title: Prix du Jury du Hackation de Sogeti Labs
+              content: Développement de modèles de Machine Learning pour la détection de personne en situation de sur-endettement.
+              image: /images/sogeti.png
+      
+        # projects
+        projects:
+          enable: true
+          title: "Projets"
+          items:
+            - title: Twibot
+              content: Un robot qui joue à Twinit, un jeu où le but est de former des paires de cartes le plus rapidement possible en les pointant du doigt. J'ai utilisé un petit modèle YOLO pour détecter les cartes, puis une techinque de keypoint matching pour identifier deux cartes identiques.
+              image: /images/twibot.png
+              badges:
+                - "Python"
+                - "PyTorch"
+                - "OpenCV"
+              links:
+                - icon: fab fa-github
+                  url: https://github.com/adlane98/twibot
+                  
+            - title: Méthodes de super-résolution pour des IRM de cerveau
+              content: Avec mon équipe nous avons implémenté trois différents réseaux de neurones pour augmenter la résolution d'IRM de cerveaux de Marmouset, le plus petit primate du monde.
+              image: /images/srm4bmri.png
+              badges:
+                - "Python"
+                - "Tensorflow"
+              links:
+                - icon: fab fa-github
+                  url: https://github.com/adlane98/SRM4BMRI/tree/main
+      
+            - title: Implémentation Scala d'UMAP
+              content: |-
+                        Nous avons contribué à la librairie Scala Clustering4Ever,
+                        en fournissant une implémentation de l'algorithme de réduction de dimension
+                        Uniform Manifold Approximation and Projection (UMAP).
+              image: /images/umap.png
+              # featured:
+              #  disable: true
+              #  name: UMAP paper
+              #  link: https://arxiv.org/abs/1802.03426
+              badges:
+                - "Scala"
+                - "Python"
+              links:
+                - icon: fab fa-github
+                  url: https://github.com/Clustering4Ever/Clustering4Ever
+      
+        #Contact
+        contact:
+          enable: true
+          title: "Contact"
+          content: Vous pouvez toujours me contacter si vous le souhaitez, ma boîte mail est toujours ouverte !
+          btnName: E-mail
+          btnLink: mailto:ladjal.adlane@gmail.com
+          # formspree:
+          #   enable: true # `contact.email` value will be ignored
+          #   formId: abcdefgh # Take it from your form's endpoint, like 'https://formspree.io/f/abcdefgh'
+          #   emailCaption: "Enter your email address"
+          #   messageCaption: "Enter your message here"
+      
+        footer:
+          recentPosts:
+            path: "blogs"
+            count: 3
+            title: Recent Posts
+            enable: true
+            disableFeaturedImage: false
+          # socialNetworks:
+          #  github: https://github.com/adlane98
+          #  linkedin: https://www.linkedin.com/in/adlane-ladjal
+          #  instagram: https://www.instagram.com/shotsbyadlane
+          #  twitter: https://x.com/adlaneladjal
+      
+        # List pages like blogs and posts
+        listPages:
+          disableFeaturedImage: false
+      
+        # Single pages like blog and post
+        singlePages:
+          readTime:
+            enable: true
+            content: "min read"
+          scrollprogress:
+            enable: true
+      
+        # For translations
+        terms:
+          read: "Read"
+          toc: "Table Of Contents"
+          copyright: "All rights reserved"
+          pageNotFound: "Page not found"
+          emailText: "Check out this site"
+      
+        datesFormat:
+          article: "Jan 2, 2006"
+          articleList: "Jan 2, 2006"
+          articleRecent: "Jan 2, 2006"
+      
+        #customScripts: -| # You can add custom scripts which will be added before </body> tag
+        #  <script type="text/javascript"><!-- any script here --></script>
+
+outputs:
+  home:
+    - "HTML"
+    - "RSS"
+    - "JSON"
+  page:
+    - "HTML"
+    - "RSS"
+
+Paginate: 3
+enableRobotsTXT: true
+# disqusShortname: your-disqus-shortname
+# googleAnalytics: G-MEASUREMENT_ID
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
+# Menus:
+#  main:
+#    - identifier: blog
+#      name: Blog
+#      title: Blog posts
+#      url: /blogs
+#      weight: 1
+#    - identifier: gallery
+#      name: Gallery
+#      title: Blog posts
+#      url: /gallery
+#      weight: 2
+    #Dropdown menu
+    # - identifier: dropdown
+    #   title: Example dropdown menu
+    #   name: Dropdown
+    #   weight: 3
+    # - identifier: dropdown1
+    #   title: example dropdown 1
+    #   name: example 1
+    #   url: /#
+    #   parent: dropdown
+    #   weight: 1
+    # - identifier: dropdown2
+    #   title: example dropdown 2
+    #   name: example 2
+    #   url: /#
+    #   parent: dropdown
+    #   weight: 2
+
