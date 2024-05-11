@@ -2,7 +2,7 @@ baseURL: ""
 theme: hugo-profile
 
 defaultContentLanguage: en
-defaultContentLanguageInSubdir: true
+defaultContentLanguageInSubdir: false
 
 languages: 
     en:
