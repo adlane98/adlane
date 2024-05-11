@@ -1,4 +1,4 @@
-baseURL: ""
+baseURL: "https://adlane.me"
 theme: hugo-profile
 
 defaultContentLanguage: en
