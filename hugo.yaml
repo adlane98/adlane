@@ -493,7 +493,7 @@ languages:
             - job: "Ingénieur Deep Learning & Traitement d'images"
               company: "Smiths Detection"
               companyUrl: "https://www.smithsdetection.com/"
-              date: "Fév 2022 - aujourd'hui"
+              date: "Fév 2022 - AJD"
               location: "Région parisienne"
               info:
                 enable: false
