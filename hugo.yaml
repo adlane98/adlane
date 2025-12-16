@@ -493,7 +493,7 @@ languages:
             - job: "Ingénieur Deep Learning & Traitement d'images"
               company: "Smiths Detection"
               companyUrl: "https://www.smithsdetection.com/"
-              date: "Fév 2022 - AJD"
+              date: "Fév 2022 - aujourd''hui"
               location: "Région parisienne"
               info:
                 enable: false
@@ -729,13 +729,13 @@ markup:
     renderer:
       unsafe: true
 
-# Menus:
-#  main:
-#    - identifier: blog
-#      name: Blog
-#      title: Blog posts
-#      url: /blogs
-#      weight: 1
+Menus:
+ main:
+   - identifier: blog
+     name: Blog
+     title: Recent posts
+     url: /blogs
+     weight: 1
 #    - identifier: gallery
 #      name: Gallery
 #      title: Blog posts
