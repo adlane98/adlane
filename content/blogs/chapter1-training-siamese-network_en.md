@@ -12,6 +12,7 @@ image: /images/siamese-scheme-english.png
 description: ""
 toc: true
 mathjax: true
+socialShare: false
 ---
 
 ## Introduction
