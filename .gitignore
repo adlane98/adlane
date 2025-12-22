@@ -2,3 +2,5 @@
 public/
 archetypes/
 *.lock
+static/
+

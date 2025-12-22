@@ -19,7 +19,7 @@ languages:
         title: "Adlane"
         description: Text about my cool site
         # staticPath: ""  # The path to serve the static files from
-        favicon: "/fav.png"
+        favicon: "/images/logo.png"
       
         # Whether to serve bootstrap css and js files from CDN or not. Can be set to true, "css" or "js" to choose between
         # serving both, only the css, or only the js files through the CDN. Any other value will make so that CDN is not used.
@@ -68,7 +68,7 @@ languages:
         # If you want to customize the menu, you can change it here
         navbar:
           align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
-          # brandLogo: "/logo.png" # Logo for the brand | default is the favicon variable
+          brandLogo: "/images/logo.png" # Logo for the brand | default is the favicon variable
           showBrandLogo: false # Show brand logo in nav bar | default is true
           brandName: "Adlane" # Brand name for the brand | default is the title variable
           disableSearch: true
@@ -140,78 +140,56 @@ languages:
           enable: true
           # title: "Custom Name"
           items:
-            - job: "Deep Learning & Image Processing Engineer"
-              company: "Smiths Detection"
+            - company: "Smiths Detection"
               companyUrl: "https://www.smithsdetection.com/"
-              date: "Feb 2022 - present"
-              location: "Paris area"
-              info:
-                enable: false
-              featuredLink:
-                enable: false
-                name: ""
-                url: ""
-              content: |
-                Currently in charge of several projects at [Smiths Detection](https://www.smithsdetection.com/) in Paris area, including:
-                - Threats detection.
-                - Image visualisation enhancement (denoising, super-resolution).
-                - Algorithm optimization leveraging GPU.
-                
-                Stack: Python, PyTorch, ONNX, C++, CUDA
-      
-            - job: "Data Scientist"
-              company: "Sogeti"
+              jobs:
+                - name: "Deep Learning & Image Processing Engineer"
+                  date: "Feb 2022 - present"
+                  content: |
+                    Currently in charge of several projects at [Smiths Detection](https://www.smithsdetection.com/) in Paris area, including:
+                    - Threats detection.
+                    - Image visualisation enhancement (denoising, super-resolution).
+                    - Algorithm optimization leveraging GPU.
+                    
+                    Stack: Python, PyTorch, ONNX, C++, CUDA
+
+            - company: "Sogeti"
               companyUrl: "https://labs.sogeti.com/about/"
-              date: "April 2021 - Sep 2021"
-              location: "Paris area"
-              featuredLink:
-                enable: false
-                url: ""
-              info:
-                enable: false
-                content: 
-              content: |
-                I developed deep learning models for damage detection on damaged vehicles using [MMDetection](https://github.com/open-mmlab/mmdetection) library.
+              jobs:
+                - name: "Data Scientist"
+                  date: "April 2021 - Sep 2021"
+                  content: |
+                    I developed deep learning models for damage detection on damaged vehicles using [MMDetection](https://github.com/open-mmlab/mmdetection) library.
       
-                - Writing SOTA report.
-                - Implementation of [Hybride Task Cascade](https://arxiv.org/abs/1901.07518) model.
-                - Data management.
-                - Training and testing.
-                
-                Stack: Python, PyTorch, MMDetection
-      
-            - job: "Python Developer"
-              company: "Caciis"
+                    - Writing SOTA report.
+                    - Implementation of [Hybride Task Cascade](https://arxiv.org/abs/1901.07518) model.
+                    - Data management.
+                    - Training and testing.
+                    
+                    Stack: Python, PyTorch, MMDetection
+
+            - company: "Caciis"
               companyUrl: "https://caciis.com/"
-              date: "Feb 2020 - Aug 2020"
-              location: "Paris"
-              info:
-                enable: false
-              featuredLink:
-                enable: false
-                url: ""
-              content: |
-                I took part in the development of a Python-based tool allowing migration of RedBack routers' configuration to Cisco routers.
-                I carried out several audit on both manufacturers' routers.
-                
-                Stack: Python, Django
-      
-            - job: "Data Engineer"
-              company: "Cegid Talentsoft"
+              jobs:
+                - name: "Python Developer"
+                  date: "Feb 2020 - Aug 2020"
+                  content: |
+                    I took part in the development of a Python-based tool allowing migration of RedBack routers' configuration to Cisco routers.
+                    I carried out several audit on both manufacturers' routers.
+                    
+                    Stack: Python, Django
+
+            - company: "Cegid Talentsoft"
               companyUrl: "https://www.cegid.com/fr/produits/cegid-talentsoft/"
-              date: "June 2019 - Aug 2019"
-              location: "Paris area"
-              info:
-                enable: false
-              featuredLink:
-                enable: false
-                url: ""
-              content: |
-                At Talentsoft I achieved two missions:
-                - I was responsible of adding the widget translation of the Talentsoft tool's landing page.
-                - I made a POC to improve the performance of the textual searches performed on the database. I was also responsible of the data migration from MS SQL server to Elasticserch.
-                
-                Stack: C#/.NET, Typescript, MS SQL Server, Elasticserch
+              jobs:
+                - name: "Data Engineer"
+                  date: "June 2019 - Aug 2019"
+                  content: |
+                    At Talentsoft I achieved two missions:
+                    - I was responsible of adding the widget translation of the Talentsoft tool's landing page.
+                    - I made a POC to improve the performance of the textual searches performed on the database. I was also responsible of the data migration from MS SQL server to Elasticserch.
+                    
+                    Stack: C#/.NET, Typescript, MS SQL Server, Elasticserch
       
         # Education
         education:
@@ -371,7 +349,7 @@ languages:
         title: "Adlane"
         description: Text about my cool site
         # staticPath: ""  # The path to serve the static files from
-        favicon: "/fav.png"
+        favicon: "/images/logo.png"
       
         # Whether to serve bootstrap css and js files from CDN or not. Can be set to true, "css" or "js" to choose between
         # serving both, only the css, or only the js files through the CDN. Any other value will make so that CDN is not used.
@@ -420,7 +398,7 @@ languages:
         # If you want to customize the menu, you can change it here
         navbar:
           align: ms-auto # Left: ms-auto | center: mx-auto | right: me-auto | Default: ms-auto
-          # brandLogo: "/logo.png" # Logo for the brand | default is the favicon variable
+          brandLogo: "/images/logo.png" # Logo for the brand | default is the favicon variable
           showBrandLogo: false # Show brand logo in nav bar | default is true
           brandName: "Adlane" # Brand name for the brand | default is the title variable
           disableSearch: true
@@ -490,78 +468,56 @@ languages:
           enable: true
           title: "Expériences"
           items:
-            - job: "Ingénieur Deep Learning & Traitement d'images"
-              company: "Smiths Detection"
+            - company: "Smiths Detection"
               companyUrl: "https://www.smithsdetection.com/"
-              date: "Fév 2022 - aujourd''hui"
-              location: "Région parisienne"
-              info:
-                enable: false
-              featuredLink:
-                enable: false
-                name: ""
-                url: ""
-              content: |
-                Je suis responsable de plusieurs projets chez [Smiths Detection](https://www.smithsdetection.com/) en région parisienne :
-                - Détection de menaces.
-                - Amélioration de la qualité d'images (débruitage, super-résolution).
-                - Optimisation d'algorithmes de traitement d'images via GPU.
-                
-                Stack: Python, PyTorch, ONNX, C++, CUDA
-      
-            - job: "Data Scientist"
-              company: "Sogeti"
+              jobs:
+                - name: "Ingénieur Deep Learning & Traitement d'images"
+                  date: "Fév 2022 - aujourd'hui"
+                  content: |
+                    Je suis responsable de plusieurs projets chez [Smiths Detection](https://www.smithsdetection.com/) en région parisienne :
+                    - Détection de menaces.
+                    - Amélioration de la qualité d'images (débruitage, super-résolution).
+                    - Optimisation d'algorithmes de traitement d'images via GPU.
+                    
+                    Stack: Python, PyTorch, ONNX, C++, CUDA
+
+            - company: "Sogeti"
               companyUrl: "https://labs.sogeti.com/about/"
-              date: "Avril 2021 - Sep 2021"
-              location: "Région parisienne"
-              featuredLink:
-                enable: false
-                url: ""
-              info:
-                enable: false
-                content: 
-              content: |
-                J'ai développé des modèles de Deep Learning pour la détéction de domages sur des véhicules accidentés en utilisant la bibliothèque [MMDetection](https://github.com/open-mmlab/mmdetection).
+              jobs:
+                - name: "Data Scientist"
+                  date: "Avril 2021 - Sep 2021"
+                  content: |
+                    J'ai développé des modèles de Deep Learning pour la détéction de domages sur des véhicules accidentés en utilisant la bibliothèque [MMDetection](https://github.com/open-mmlab/mmdetection).
       
-                - Ecriture d'un rapport d'état de l'art.
-                - Implémentation du modèle [Hybride Task Cascade](https://arxiv.org/abs/1901.07518) model.
-                - Gestion des données.
-                - Entraînement et test du modèle.
-                
-                Stack: Python, PyTorch, MMDetection
-      
-            - job: "Développeur Python"
-              company: "Caciis"
+                    - Ecriture d'un rapport d'état de l'art.
+                    - Implémentation du modèle [Hybride Task Cascade](https://arxiv.org/abs/1901.07518) model.
+                    - Gestion des données.
+                    - Entraînement et test du modèle.
+                    
+                    Stack: Python, PyTorch, MMDetection
+
+            - company: "Caciis"
               companyUrl: "https://caciis.com/"
-              date: "Fév 2020 - Août 2020"
-              location: "Paris"
-              info:
-                enable: false
-              featuredLink:
-                enable: false
-                url: ""
-              content: |
-                J'ai pris part au développement d'un outil Python pour faciliter la traduction de la configuration de routeurs RedBack, vers la configuration de routeurs.
-                J'ai mené plusieurs audits sur les deux types de routeurs.
-                
-                Stack: Python, Django
-      
-            - job: "Data Engineer"
-              company: "Cegid Talentsoft"
-              companyUrl: "https://example.com"
-              date: "Juin 2019 - Août 2019"
-              location: "Région parisienne"
-              info:
-                enable: false
-              featuredLink:
-                enable: false
-                url: ""
-              content: |
-                J'ai été en charge de deux missions chez Talentsoft :
-                - J'ai été responsable d'ajouter la fonctionnalité de traduction des widgets de la landing page du produit principal de Talentsoft.
-                - J'ai réalisé un POC pour améliorer les performances de la recherche full-text sur la base de données. J'étais responsable de la migration des données de MS SQL server vers Elasticserch.
-                
-                Stack: C#/.NET, Typescript, MS SQL Server, Elasticserch
+              jobs:
+                - name: "Développeur Python"
+                  date: "Fév 2020 - Août 2020"
+                  content: |
+                    J'ai pris part au développement d'un outil Python pour faciliter la traduction de la configuration de routeurs RedBack, vers la configuration de routeurs.
+                    J'ai mené plusieurs audits sur les deux types de routeurs.
+                    
+                    Stack: Python, Django
+
+            - company: "Cegid Talentsoft"
+              companyUrl: "https://www.cegid.com/fr/produits/cegid-talentsoft/"
+              jobs:
+                - name: "Data Engineer"
+                  date: "Juin 2019 - Août 2019"
+                  content: |
+                    J'ai été en charge de deux missions chez Talentsoft :
+                    - J'ai été responsable d'ajouter la fonctionnalité de traduction des widgets de la landing page du produit principal de Talentsoft.
+                    - J'ai réalisé un POC pour améliorer les performances de la recherche full-text sur la base de données. J'étais responsable de la migration des données de MS SQL server vers Elasticserch.
+                    
+                    Stack: C#/.NET, Typescript, MS SQL Server, Elasticserch
       
         # Education
         education:
