@@ -46,7 +46,7 @@ set_seed(seed)
 
 ```
 
-### The Dataset Used
+### The dataset used
 
 To train and evaluate our model, we use the [CIFAR‑10](https://www.cs.toronto.edu/~kriz/cifar.html) dataset, a classic *benchmark* composed of 60,000 color images (32×32 pixels) divided into 10 balanced classes: airplane, car, bird, cat, deer, dog, frog, horse, ship, and truck. The dataset is initially separated into 50,000 training examples and 10,000 test examples, but here we only use the training data.
 
@@ -111,11 +111,11 @@ plt.show()
     
 
 
-## Siamese Networks
+## Siamese networks
 
-### What is a Siamese Network?
+### What is a siamese network?
 
-A Siamese network is a neural network architecture designed not to directly predict a class, but to **compare** examples with each other.
+A siamese network is a neural network architecture designed not to directly predict a class, but to **compare** examples with each other.
 
 The key idea is this: two images that we consider “similar” (for example, two dogs) must be close in the representation space, while two “different” images (a dog and a car) must be far apart. During training, we therefore present the model with pairs or triplets of images (`anchor`, `positive`, `negative`) and we adjust the weights to bring `anchor` and `positive` closer, while moving `anchor` and `negative` further apart.
 
@@ -224,7 +224,7 @@ print("Tensor size after our model:", out.shape)
 
 <br/>
 
-### The *Triplet Loss*
+### The *triplet loss*
 
 Triplet loss enforces that, for each (`anchor`, `positive`, `negative`), the positive is embedded closer to the anchor than the negative, with a certain margin. In other words, we seek to verify
 $$ d(f(a), f(p)) + m < d(f(a), f(n)) $$
@@ -232,7 +232,7 @@ where \\(f(\cdot)\\) is the embedding network, \\(d\\) a distance measure and \\
 
 
 In our case, we use a distance derived from cosine similarity: the closer two vectors are angularly, the more they are considered similar. The *triplet loss* is then written, for a batch of size \\(B\\),
-$$ \mathcal{L} = \frac{1}{B} \sum_{i=1}^B \max\big(0,\ d(-i, p_i) - d(-i, n_i) + m\big). $$
+$$ \mathcal{L} = \frac{1}{B} \sum_{i=1}^B \max\big(0,\ d(a_i, p_i) - d(a_i, n_i) + m\big). $$
 
 Each term is zero as soon as the constraint is satisfied (the triplet is “good”). The value is strictly positive when `anchor` is still too close to `negative`. We therefore do not only want \\(d(-i, p_i) < d(-i, n_i)\\), but a separation of at least \\(m\\).
 
@@ -247,9 +247,9 @@ def triplet_loss(anchor, positive, negative, margin=0.4):
 
 ```
 
-### Construction of Triplets
+### Construction of triplets
 
-To train a Siamese network with a *triplet loss*, we must transform our dataset of independent images into a dataset of triplets (`anchor`, `positive`, `negative`). On CIFAR‑10, we proceed class by class:
+To train a siamese network with a *triplet loss*, we must transform our dataset of independent images into a dataset of triplets (`anchor`, `positive`, `negative`). On CIFAR‑10, we proceed class by class:
 - for a given class (for example “cat”), we form pairs (`anchor`, `positive`) with two images of this class;
 - we then randomly draw an image from a different class to play the role of `negative`.
 
@@ -395,9 +395,9 @@ plt.show()
 
 ### Training
 
-#### Training Parameters
+#### Training parameters
 
-To train our Siamese network with the *triplet loss*, we must choose a few key hyperparameters:
+To train our siamese network with the *triplet loss*, we must choose a few key hyperparameters:
 - the **batch size**;
 - the **learning rate** of the optimizer;
 - the **number of epochs**;
@@ -425,7 +425,7 @@ net = VGG11Embedding(weights=VGG11_Weights.IMAGENET1K_V1).to(device)
 optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
 ```
 
-#### Evaluation Metrics
+#### Evaluation metrics
 
 We use the following metrics to evaluate the model on the validation phase:
 - **ratio of “good” triplets**: proportion of triplets where `anchor` is closer to `positive` than to `negative`;
@@ -471,7 +471,7 @@ def train_loop(net, dataloader, optimizer, margin, print_freq=10):
 
 ```
 
-#### Validation Loop
+#### Validation loop
 
 For the entire validation set, we calculate the metrics defined above (cosine similarities, Euclidean distances, ratio of good triplets and AUC).
 
@@ -537,7 +537,7 @@ def validation_loop(net, dataloader, margin):
 
 ```
 
-#### Complete Training over Several Epochs
+#### Complete training over several epochs
 
 To train a model, we need to construct our training and validation `DataLoader`s:
 
@@ -735,7 +735,7 @@ Validation metrics — val_loss: 0.0600, val_auc: 0.9469, mean_positive_similari
 
 <br/>
 
-#### Visualization of the Training Loss Curve
+#### Visualization of the training loss curve
 
 Let's plot the evolution of the loss during training. We plot the training loss and the validation loss.
 
@@ -759,7 +759,7 @@ plt.show()
     
 
 
-#### Visualization of the ROC Curve and AUC
+#### ROC curve
 
 To better interpret the model's performance, we plot the ROC (*Receiver Operating Characteristic*) curve, which represents the true positive rate against the false positive rate for all possible thresholds. The area under this curve (AUC) summarizes in a single number the model's ability to separate pairs of the same class from pairs of different classes.
 
@@ -829,7 +829,7 @@ Here, we add code to reload the model in case something goes wrong later in the 
 
 ```
 
-## Distance Matrix
+## Distance matrix
 
 We can already compare the distances between `anchor` and `positive`, and those between `anchor` and `negative`. The former should be **smaller** than the latter.
 
@@ -973,7 +973,7 @@ Several interesting observations emerge from this matrix:
 
 **Well-separated classes**: conversely, *automobile* vs *deer* (1.42) or *bird* vs *truck* (1.20) show high distances, consistent with the absence of visual resemblance between these categories.
 
-### Principal Component Analysis
+## 2D projection using PCA
 
 It is also interesting to observe how our embeddings are distributed. As they live in a 128-dimensional space, we project them into 2D to visualize them.
 
@@ -1158,7 +1158,7 @@ for k, v in ellipse_params.items():
 
 ## Conclusion
 
-In this article, we analyzed the embeddings obtained after training a Siamese network with a *triplet loss* on CIFAR‑10. The results show a good separation of classes in the embedding space, and the observed confusions (*cat*/*dog*, *airplane*/*ship*) correspond to real visual similarities. The distance matrix and the PCA projection (PCA) with confidence ellipses allow us to visualize and quantify the compactness of each group.
+In this article, we analyzed the embeddings obtained after training a siamese network with a *triplet loss* on CIFAR‑10. The results show a good separation of classes in the embedding space, and the observed confusions (*cat*/*dog*, *airplane*/*ship*) correspond to real visual similarities. The distance matrix and the PCA projection (PCA) with confidence ellipses allow us to visualize and quantify the compactness of each group.
 
 In the next part of this series, we will introduce the *KoLeo loss* to encourage a more uniform distribution of embeddings, and we will study the impact of gradient accumulation on this batch-dependent regularization.
 
