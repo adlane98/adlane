@@ -1,6 +1,6 @@
 ---
 title: "Training a siamese network with a triplet loss on CIFAR-10 - Part 1/3"
-date: 2025-12-01T19:53:33+05:30
+date: 2025-12-26T19:53:33+05:30
 draft: false
 author: "Adlane Ladjal"
 tags:
@@ -25,26 +25,8 @@ We will then study the KoLeo loss, a batch-dependent regularization that aims to
 
 We start by describing the dataset, the construction of triplets, and the evaluation, then we will compare the results with and without *KoLeo* before discussing the effect of gradient accumulation.
 
-First, we set the *seeds* for reproducibility.
+Throughout this article, we will set the random seed at appropriate moments to ensure reproducibility.
 
-
-```python
-import numpy as np
-import torch
-
-seed = 42
-
-def set_seed(seed):
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed(seed)
-    if torch.mps.is_available():
-        torch.mps.manual_seed(seed)
-
-set_seed(seed)
-
-```
 
 ### The dataset used
 
@@ -56,6 +38,8 @@ After downloading, we notice that the archive contains 6 binary files: `data_bat
 
 ```python
 import pickle
+
+import numpy as np
 
 def unpickle(file):
     with open(file, 'rb') as fo:
@@ -107,7 +91,7 @@ plt.show()
 
 
     
-![png](/chapter1_files/chapter1_5_0.png)
+![png](/chapter1_files/chapter1_4_0.png)
     
 
 
@@ -135,6 +119,7 @@ Let's first see the size of the tensor at the output of VGG11.
 
 
 ```python
+import torch
 from torchvision import models
 
 vgg = models.vgg11(weights=None)
@@ -188,7 +173,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class VGG11Embedding(nn.Module):
-    def __init__(self, weights):
+    def __init__(self, weights=None):
         super(VGG11Embedding, self).__init__()
         vgg = models.vgg11(weights=weights)
         self.features = vgg.features
@@ -234,7 +219,7 @@ where \\(f(\cdot)\\) is the embedding network, \\(d\\) a distance measure and \\
 In our case, we use a distance derived from cosine similarity: the closer two vectors are angularly, the more they are considered similar. The *triplet loss* is then written, for a batch of size \\(B\\),
 $$ \mathcal{L} = \frac{1}{B} \sum_{i=1}^B \max\big(0,\ d(a_i, p_i) - d(a_i, n_i) + m\big). $$
 
-Each term is zero as soon as the constraint is satisfied (the triplet is “good”). The value is strictly positive when `anchor` is still too close to `negative`. We therefore do not only want \\(d(-i, p_i) < d(-i, n_i)\\), but a separation of at least \\(m\\).
+Each term is zero as soon as the constraint is satisfied (the triplet is “good”). The value is strictly positive when `anchor` is still too close to `negative`. We therefore do not only want \\(d(a_i, p_i) < d(a_i, n_i)\\), but a separation of at least \\(m\\).
 
 
 
@@ -261,7 +246,8 @@ We repeat this operation for each of the 10 classes, which gives a globally bala
 triplets = np.empty((0, 3, 32, 32, 3), dtype=np.uint8)
 triplets_labels = np.empty((0, 3), dtype=np.uint8)
 
-set_seed(seed)
+seed = 42
+np.random.seed(seed)
 for target in range(10):
     class_mask = (labels == target)
     images_target = images[class_mask]
@@ -274,7 +260,6 @@ for target in range(10):
     images_not_target = images[not_target_mask]
     labels_not_target = labels[not_target_mask]
 
-    # On echantillonne un nombre fixe de negatives pour cette classe
     n_neg = min(2500, len(images_not_target))
     neg_indices = np.random.choice(len(images_not_target), n_neg, replace=False)
     negatives = images_not_target[neg_indices]
@@ -389,7 +374,7 @@ plt.show()
 
 
     
-![png](/chapter1_files/chapter1_21_0.png)
+![png](/chapter1_files/chapter1_20_0.png)
     
 
 
@@ -403,7 +388,7 @@ To train our siamese network with the *triplet loss*, we must choose a few key h
 - the **number of epochs**;
 - the **margin** of the *triplet loss*.
 
-We also define the `device` and choose Adam as the optimizer.
+We also define the `device` here.
 
 
 
@@ -421,8 +406,6 @@ batch_size = 64
 learning_rate = 5e-4
 margin = 0.4
 
-net = VGG11Embedding(weights=VGG11_Weights.IMAGENET1K_V1).to(device)
-optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
 ```
 
 #### Evaluation metrics
@@ -473,7 +456,7 @@ def train_loop(net, dataloader, optimizer, margin, print_freq=10):
 
 #### Validation loop
 
-For the entire validation set, we calculate the metrics defined above (cosine similarities, Euclidean distances, ratio of good triplets and AUC).
+For the entire validation set, we calculate the metrics defined above.
 
 
 
@@ -539,8 +522,7 @@ def validation_loop(net, dataloader, margin):
 
 #### Complete training over several epochs
 
-To train a model, we need to construct our training and validation `DataLoader`s:
-
+To train a model, we need to construct our training and validation datasets:
 
 
 ```python
@@ -549,20 +531,18 @@ from torch.utils.data import DataLoader
 val_split = 0.05
 num_train = int((1 - val_split) * len(triplets))
 
+np.random.seed(seed)
 shuffle_indices = np.random.permutation(len(triplets))
-triplets = triplets[shuffle_indices]
-triplets_labels = triplets_labels[shuffle_indices]
+shuffled_triplets = triplets[shuffle_indices]
+shuffled_triplets_labels = triplets_labels[shuffle_indices]
 
-train_triplets = triplets[:num_train, ...]
-val_triplets = triplets[num_train:]
-train_labels = triplets_labels[:num_train, ...]
-val_labels = triplets_labels[num_train:]
+train_triplets = shuffled_triplets[:num_train, ...]
+val_triplets = shuffled_triplets[num_train:]
+train_labels = shuffled_triplets_labels[:num_train, ...]
+val_labels = shuffled_triplets_labels[num_train:]
 
 train_dataset = TripletsCIFAR10Dataset(train_triplets, transform=train_transforms)
 val_dataset = TripletsCIFAR10Dataset(val_triplets, transform=val_transforms)
-
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
 ```
 
@@ -604,6 +584,7 @@ with (save_dir / "config.json").open("w") as fp:
 
 ```python
 import csv
+import random
 
 metrics_path = save_dir / "training_metrics.csv"
 
@@ -628,10 +609,25 @@ with open(metrics_path, mode='w', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=csv_headers)
     writer.writeheader()
 
-set_seed(seed)
+random.seed(seed)
+torch.manual_seed(seed)
+
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(seed)
+if torch.mps.is_available():
+    torch.mps.manual_seed(seed)
+
+gt = torch.Generator()
+gt.manual_seed(seed)
+
+val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, generator=gt)
+
+net = VGG11Embedding(weights=VGG11_Weights.IMAGENET1K_V1).to(device)
+optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
 
 val_metrics = validation_loop(net, val_loader, margin)
-print(f"Before training, epoch 0 — val_loss = {val_metrics['val_loss']}")
+print(f"Before training")
 print(
     f"Validation metrics — "
     f"val_loss: {val_metrics['val_loss']:.4f}, "
@@ -705,31 +701,26 @@ for epoch_idx in range(epochs):
 
 ```
 <div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">
-Before training, epoch 0 — val_loss = 0.3092861518263817 <br/>
-Validation metrics — val_loss: 0.3093, val_auc: 0.6764, mean_positive_similarities: 0.2754, mean_negative_similarities: 0.1793, mean_positive_euclidean_distances: 1.1962, mean_negative_euclidean_distances: 1.2766, good_triplets_ratio: 0.6928 <br/>
-Batch 100 : loss = 0.2213 <br/>
-Batch 200 : loss = 0.1943 <br/>
-Batch 300 : loss = 0.1630 <br/>
-Epoch 1 — train_loss = 0.1872, val_loss = 0.1577 <br/>
-Validation metrics — val_loss: 0.1577, val_auc: 0.8403, mean_positive_similarities: 0.7603, mean_negative_similarities: 0.2158, mean_positive_euclidean_distances: 0.5773, mean_negative_euclidean_distances: 1.1755, good_triplets_ratio: 0.8352 <br/>
-New best AUC: 0.8403 (epoch 1) <br/>
-Batch 100 : loss = 0.1443 <br/>
-Batch 200 : loss = 0.1411 <br/>
-Batch 300 : loss = 0.1389 <br/>
-Epoch 2 — train_loss = 0.1381, val_loss = 0.1381 <br/>
-Validation metrics — val_loss: 0.1381, val_auc: 0.8643, mean_positive_similarities: 0.7282, mean_negative_similarities: 0.1812, mean_positive_euclidean_distances: 0.6405, mean_negative_euclidean_distances: 1.2281, good_triplets_ratio: 0.8616 <br/>
-New best AUC: 0.8643 (epoch 2) <br/>
-Batch 100 : loss = 0.1181 <br/>
-Batch 200 : loss = 0.1119 <br/>
-Batch 300 : loss = 0.1102 <br/>
-... <br/>
-Epoch 14 — train_loss = 0.0354, val_loss = 0.0722 <br/>
-Validation metrics — val_loss: 0.0722, val_auc: 0.9393, mean_positive_similarities: 0.7574, mean_negative_similarities: -0.0259, mean_positive_euclidean_distances: 0.5672, mean_negative_euclidean_distances: 1.4029, good_triplets_ratio: 0.9264 <br/>
-Batch 100 : loss = 0.0375 <br/>
-Batch 200 : loss = 0.0309 <br/>
-Batch 300 : loss = 0.0314 <br/>
-Epoch 15 — train_loss = 0.0337, val_loss = 0.0600 <br/>
-Validation metrics — val_loss: 0.0600, val_auc: 0.9469, mean_positive_similarities: 0.7675, mean_negative_similarities: -0.0421, mean_positive_euclidean_distances: 0.5642, mean_negative_euclidean_distances: 1.4154, good_triplets_ratio: 0.9440 <br/>
+Before training <br/>
+Validation metrics — val_loss: 0.3156, val_auc: 0.6642, mean_positive_similarities: 0.2750, mean_negative_similarities: 0.1853, mean_positive_euclidean_distances: 1.1968, mean_negative_euclidean_distances: 1.2714, good_triplets_ratio: 0.6656 <br/>
+Batch 100 : loss = 0.2465 <br/>
+Batch 200 : loss = 0.2036 <br/>
+Batch 300 : loss = 0.1619 <br/>
+Epoch 1 — train_loss = 0.1966, val_loss = 0.1742 <br/>
+Validation metrics — val_loss: 0.1742, val_auc: 0.8233, mean_positive_similarities: 0.7488, mean_negative_similarities: 0.2164, mean_positive_euclidean_distances: 0.5882, mean_negative_euclidean_distances: 1.1666, good_triplets_ratio: 0.8264 <br/>
+New best AUC: 0.8233 (epoch 1) <br/>
+Batch 100 : loss = 0.1609 <br/>
+Batch 200 : loss = 0.1348 <br/>
+Batch 300 : loss = 0.1436 <br/>
+Epoch 2 — train_loss = 0.1433, val_loss = 0.1177 <br/>
+Validation metrics — val_loss: 0.1177, val_auc: 0.8939, mean_positive_similarities: 0.7731, mean_negative_similarities: 0.0771, mean_positive_euclidean_distances: 0.5667, mean_negative_euclidean_distances: 1.2967, good_triplets_ratio: 0.8840 <br/>
+New best AUC: 0.8939 (epoch 2) <br/>
+Batch 100 : loss = 0.1226 <br/>
+Batch 200 : loss = 0.1147 <br/>
+Batch 300 : loss = 0.1107 <br/>
+...
+Epoch 15 — train_loss = 0.0354, val_loss = 0.0621 <br/>
+Validation metrics — val_loss: 0.0621, val_auc: 0.9522, mean_positive_similarities: 0.7842, mean_negative_similarities: -0.0637, mean_positive_euclidean_distances: 0.5275, mean_negative_euclidean_distances: 1.4324, good_triplets_ratio: 0.9384 <br/>
 
 </div>
 
@@ -755,8 +746,16 @@ plt.show()
 
 
     
-![png](/chapter1_files/chapter1_34_0.png)
+![png](/chapter1_files/chapter1_33_0.png)
     
+
+Here, we load the best epoch of the model.
+
+```python
+best_epoch_path = list((save_dir.glob('best_epoch_*.pth')))[0]
+net.load_state_dict(torch.load(best_epoch_path))
+
+```
 
 
 #### ROC curve
@@ -802,7 +801,6 @@ plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC Curve (AUC = {roc_auc:.
 plt.fill_between(fpr, tpr, alpha=0.3, color='darkorange', label=f'Area under the curve = {roc_auc:.3f}')
 plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--', label='Random (AUC = 0.5)')
 plt.xlim([0.0, 1.0])
-plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('False Positive Rate (FPR)')
 plt.ylabel('True Positive Rate (TPR)')
@@ -815,19 +813,9 @@ plt.show()
 
 
     
-![png](/chapter1_files/chapter1_36_0.png)
+![png](/chapter1_files/chapter1_37_0.png)
     
 
-
-Here, we add code to reload the model in case something goes wrong later in the notebook.
-
-
-
-```python
-# save_dir = Path("runs/20251213_224845")
-# net.load_state_dict(torch.load(save_dir / 'best_epoch_2.pth'))
-
-```
 
 ## Distance matrix
 
@@ -867,16 +855,16 @@ for class_idx, count in enumerate(samples_per_class):
 ```
 
 <div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto; white-space: pre;">  Number of embeddings per class:
-      airplane   : 124
-      automobile : 113
-      bird       : 125
+      airplane   : 121
+      automobile : 122
+      bird       : 146
       cat        : 119
-      deer       : 127
-      dog        : 138
-      frog       : 119
-      horse      : 123
-      ship       : 130
-      truck      : 132
+      deer       : 125
+      dog        : 117
+      frog       : 109
+      horse      : 121
+      ship       : 129
+      truck      : 141
 </div>
 
 <br/>
@@ -914,7 +902,7 @@ sns.heatmap(dist_matrix,
             annot=True,
             fmt='.2f',
             cmap='viridis', 
-            cbar_kws={'label': 'Distance L2'})
+            cbar_kws={'label': 'Cosine Distance'})
 
 plt.title('Distance Matrix', fontsize=14)
 plt.xticks(rotation=45, ha='right')
@@ -941,20 +929,20 @@ print(f"Separation margin: {np.mean(diff_class_dists) - np.mean(same_class_dists
 ```
 <div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Dimension of the distance matrix: (10, 10) <br/>
-> Heatmap saved in runs/20251221_145233/distance_matrix_heatmap.png <br/>
+> Heatmap saved in runs/20251226_232950/distance_matrix_heatmap.png <br/>
 </div>
 
 <br/>
 
     
-![png](/chapter1_files/chapter1_42_1.png)
+![png](/chapter1_files/chapter1_41_1.png)
     
 
 
 <div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
-> Intra-class distance: mean=0.2367, std=0.0698 <br/>
-> Inter-class distance: mean=1.0365, std=0.2422 <br/>
-> Separation margin: 0.7998 <br/>
+> Intra-class distance: mean=0.2249, std=0.0865 <br/>
+> Inter-class distance: mean=1.0392, std=0.2285 <br/>
+> Separation margin: 0.8143 <br/>
 </div>  
 
 <br/>
@@ -962,16 +950,16 @@ print(f"Separation margin: {np.mean(diff_class_dists) - np.mean(same_class_dists
 
 Several interesting observations emerge from this matrix:
 
-**Low diagonal**: intra-class distances (on the diagonal) are all less than 0.4, showing that the model groups images of the same class well. The best grouped classes are *ship* (0.11) and *airplane* (0.16).
+**Low diagonal**: intra-class distances (on the diagonal) are all less than 0.4, showing that the model groups images of the same class well. The best grouped classes are *ship* (0.09) and *automobile* (0.13).
 
-**Good overall separation**: the separation margin (difference between the average inter-class distance and the average intra-class distance) is about 0.80, which is a good sign.
+**Good overall separation**: the separation margin (difference between the average inter-class distance and the average intra-class distance) is about 0.70, which is a good sign.
 
 **Expected semantic confusions**: some pairs of classes remain relatively close, which corresponds to real visual similarities:
-- *cat* and *dog* (0.36): two furry animals of similar size;
-- *airplane* and *ship* (0.75): vehicles with elongated shapes, often with uniform backgrounds (sky/water);
-- *automobile* and *truck* (0.66): road vehicles sharing common visual characteristics.
+- *cat* and *dog* (0.52): two furry animals of similar size;
+- *airplane* and *ship* (0.67): vehicles with elongated shapes, often with uniform backgrounds (sky/water);
+- *automobile* and *truck* (0.63): road vehicles sharing common visual characteristics.
 
-**Well-separated classes**: conversely, *automobile* vs *deer* (1.42) or *bird* vs *truck* (1.20) show high distances, consistent with the absence of visual resemblance between these categories.
+**Well-separated classes**: conversely, *automobile* vs *deer* (1.38) or *bird* vs *truck* (1.26) show high distances, consistent with the absence of visual resemblance between these categories.
 
 ## 2D projection using PCA
 
@@ -984,7 +972,7 @@ For this, we use PCA (Principal Component Analysis): a linear dimensionality red
 ```python
 from sklearn.decomposition import PCA
 
-all_embeddings = torch.cat([embeddings_by_class[k] for k in embeddings_by_class], dim=0)
+all_embeddings = torch.cat([embeddings_by_class[k] for k in embeddings_by_class], dim=0).cpu().numpy()
 
 pca_2d = PCA(n_components=2)
 embeddings_2d = pca_2d.fit_transform(all_embeddings)
@@ -1120,13 +1108,14 @@ plot_embeddings_with_ellipses(
 
 
     
-![png](/chapter1_files/chapter1_52_0.png)
+![png](/chapter1_files/chapter1_51_0.png)
     
 
 
 The result depends on the chosen `seed`. Unless you run the exact same code (and with the same `seed`), you will necessarily get a different projection. Nevertheless, we generally find a few trends:
-- *ship* and *airplane* have the smallest ellipse areas, which confirms the analysis of the distance matrix
+- *ship* has the smallest ellipse area, which confirms the analysis of the distance matrix
 - the *cat* and *dog* points are close, as expected
+- moreover, for this training, we can see that the *dog*, *deer*, *cat*, and *bird* points overlap with each other, as they are all semantically close, they are all animals. Even frog is not far away.
 - further confirmation from the distance matrix: *automobile* and *deer* are well separated, as are *bird* and *truck*.
 
 Here are some statistics about our ellipse areas.
@@ -1136,7 +1125,7 @@ Here are some statistics about our ellipse areas.
 ```python
 mean_area = 0
 for ep_dict in ellipse_params.values():
-    area = np.pi * ep_dict["width"] * ep_dict["height"]
+    area = np.pi * ep_dict["width"] * ep_dict["height"] / 4
     ep_dict["area"] = area
     mean_area += area
 
@@ -1147,18 +1136,18 @@ for k, v in ellipse_params.items():
 ```
 
 <div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
-> Average area of the ellipses: 0.0493 <br/>
-> Ellipse area of cat = 0.0690 <br/>
-> Ellipse area of dog = 0.0546 <br/>
-> Ellipse area of horse = 0.0450 <br/>
-> Ellipse area of ship = 0.0083 <br/>
+> Average area of the ellipses: 0.0202 <br/>
+> Ellipse area of cat = 0.0626 <br/>
+> Ellipse area of dog = 0.0392 <br/>
+> Ellipse area of horse = 0.0125 <br/>
+> Ellipse area of ship = 0.0006 <br/>
 </div>
     
 <br/>
 
 ## Conclusion
 
-In this article, we analyzed the embeddings obtained after training a siamese network with a *triplet loss* on CIFAR‑10. The results show a good separation of classes in the embedding space, and the observed confusions (*cat*/*dog*, *airplane*/*ship*) correspond to real visual similarities. The distance matrix and the PCA projection (PCA) with confidence ellipses allow us to visualize and quantify the compactness of each group.
+In this article, we analyzed the embeddings obtained after training a siamese network with a *triplet loss* on CIFAR‑10. The results show a good separation of classes in the embedding space, and the observed confusions (*cat*/*dog*, *airplane*/*ship*) correspond to real visual similarities. The distance matrix and the PCA projection with confidence ellipses allow us to visualize and quantify the compactness of each group.
 
 In the next part of this series, we will introduce the *KoLeo loss* to encourage a more uniform distribution of embeddings, and we will study the impact of gradient accumulation on this batch-dependent regularization.
 
