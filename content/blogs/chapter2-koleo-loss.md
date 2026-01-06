@@ -725,32 +725,48 @@ print(f"  With KoLeo: {all_with_koleo.mean():.4f} +/- {all_with_koleo.std():.4f}
     ====================================================================== <br/>
     AUC SCORES <br/>
     ====================================================================== <br/>
-    Without KoLeo: 0.9241 +/- 0.0064 <br/>
-    With KoLeo: 0.9199 +/- 0.0042 <br/>
+    Without KoLeo: 0.9271 +/- 0.0040 <br/>
+    With KoLeo: 0.9217 +/- 0.0036 <br/>
+    <br/>
     ====================================================================== <br/>
     ELLIPSE AREAS <br/>
     ====================================================================== <br/>
     Class        | Without KoLeo (mean +/- std) | With KoLeo (mean +/- std) <br/>
     ---------------------------------------------------------------------- <br/>
-    cat          | 0.1438 +/- 0.0378        | 0.2196 +/- 0.1077 <br/>
-    dog          | 0.0725 +/- 0.0375        | 0.1493 +/- 0.0693 <br/>
-    horse        | 0.0646 +/- 0.0370        | 0.1102 +/- 0.0463 <br/>
-    ship         | 0.0513 +/- 0.0275        | 0.0828 +/- 0.0201 <br/>
+    cat          | 0.1567 +/- 0.0339        | 0.2162 +/- 0.0494 <br/>
+    dog          | 0.0781 +/- 0.0337        | 0.1458 +/- 0.0363 <br/>
+    horse        | 0.0618 +/- 0.0386        | 0.1436 +/- 0.0466 <br/>
+    ship         | 0.0486 +/- 0.0304        | 0.0819 +/- 0.0085 <br/>
+<br/>
     ====================================================================== <br/>
     Average area across all classes: <br/>
-      Without KoLeo: 0.0868 +/- 0.0356 <br/>
-      With KoLeo: 0.1377 +/- 0.0526 <br/>
+    Without KoLeo: 0.0844 +/- 0.0391 <br/>
+    With KoLeo: 0.1432 +/- 0.0585 <br/>
 </div>
 
 <br/>
+
+We can plot those data for better visualisation. The function is defined in [`plot_utils.py`](https://github.com/adlane98/koleo-study/blob/main/plot_utils.py).
+
+```python
+from plot_utils import plot_auc_and_ellipse_areas
+
+plot_auc_and_ellipse_areas(
+    results_no_koleo,
+    results_with_koleo,
+    ["Without KoLeo", "With KoLeo"],
+    LABEL_NAMES,
+)
+````
+
+![png](/chapter2_files/chapter2_25_0.png)
+ 
  
 Cross-validation allows us to draw more robust conclusions about the effect of the KoLeo loss. 
 
-The AUC score, which measures the model's ability to distinguish positive pairs from negative pairs, shows minimal impact: without KoLeo we obtain 0.9241 ± 0.0064, while with KoLeo we obtain 0.9199 ± 0.0042. 
+The AUC score, which measures the model's ability to distinguish positive pairs from negative pairs, shows minimal impact. 
 
-The slight decrease in mean AUC is accompanied by a reduction in variance (0.0042 vs 0.0064), indicating more stable performance across different data splits. 
-
-The ellipse areas are systematically larger with the KoLeo loss across all classes, confirming that the regularization indeed spreads the embeddings in space. The average area increases from 0.0868  to 0.1377, representing an increase of approximately 59%. This increase is consistent across all classes. 
+The ellipse areas are systematically larger with the KoLeo loss across all classes, confirming that the regularization indeed spreads the embeddings in space. 
 
 ## Effect of KoLeo loss weight
 
