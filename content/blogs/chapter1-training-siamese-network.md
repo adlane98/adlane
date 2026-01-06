@@ -56,7 +56,7 @@ images.shape
 ```
 
 
-<span style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<span style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > (50000, 32, 32, 3) <br/>
 </span>
 
@@ -134,7 +134,7 @@ with torch.no_grad():
 print("Size of the tensor after VGG11:", out.shape)
 
 ```
-<span style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<span style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Size of the tensor after VGG11: torch.Size([1, 1000]) <br/>
 </span>
 
@@ -155,7 +155,7 @@ with torch.no_grad():
 print("Size of the tensor after the last convolutional layer:", out.shape)
 
 ```
-<span style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<span style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Size of the tensor after the last convolutional layer: torch.Size([1, 512, 1, 1])<br/>
 </span>
 
@@ -203,7 +203,7 @@ print("Tensor size after our model:", out.shape)
 ```
 
     
-<span style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<span style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Tensor size after our model: torch.Size([1, 128]) <br/>
 </span>
 
@@ -283,7 +283,7 @@ for target in range(10):
 triplets.shape, triplets_labels.shape
 
 ```
-<span style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<span style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > ((25000, 3, 32, 32, 3), (25000, 3)) <br/>
 </span>
 
@@ -700,7 +700,7 @@ for epoch_idx in range(epochs):
         torch.save(net.state_dict(), save_dir / f'epoch_{epoch_idx+1}.pth')
 
 ```
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">
 Before training <br/>
 Validation metrics — val_loss: 0.3156, val_auc: 0.6642, mean_positive_similarities: 0.2750, mean_negative_similarities: 0.1853, mean_positive_euclidean_distances: 1.1968, mean_negative_euclidean_distances: 1.2714, good_triplets_ratio: 0.6656 <br/>
 Batch 100 : loss = 0.2465 <br/>
@@ -854,7 +854,7 @@ for class_idx, count in enumerate(samples_per_class):
 
 ```
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto; white-space: pre;">  Number of embeddings per class:
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto; white-space: pre;">  Number of embeddings per class:
       airplane   : 121
       automobile : 122
       bird       : 146
@@ -927,7 +927,7 @@ print(f"\nIntra-class distance: mean={np.mean(same_class_dists):.4f}, std={np.st
 print(f"Inter-class distance: mean={np.mean(diff_class_dists):.4f}, std={np.std(diff_class_dists):.4f}")
 print(f"Separation margin: {np.mean(diff_class_dists) - np.mean(same_class_dists):.4f}")
 ```
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Dimension of the distance matrix: (10, 10) <br/>
 > Heatmap saved in runs/20251226_232950/distance_matrix_heatmap.png <br/>
 </div>
@@ -939,7 +939,7 @@ print(f"Separation margin: {np.mean(diff_class_dists) - np.mean(same_class_dists
     
 
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Intra-class distance: mean=0.2249, std=0.0865 <br/>
 > Inter-class distance: mean=1.0392, std=0.2285 <br/>
 > Separation margin: 0.8143 <br/>
@@ -1135,7 +1135,7 @@ for k, v in ellipse_params.items():
         print(f"Ellipse area of {k} = {v['area']:.4f}")
 ```
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Average area of the ellipses: 0.0202 <br/>
 > Ellipse area of cat = 0.0626 <br/>
 > Ellipse area of dog = 0.0392 <br/>

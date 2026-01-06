@@ -128,7 +128,7 @@ print(f"Triplets shape: {triplets.shape}")
 
 ```
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Device: cpu <br/>
 >   Images shape: (50000, 32, 32, 3), Labels shape: (50000,) <br/>
 >   Triplets shape: (25000, 3, 32, 32, 3) <br/>
@@ -153,7 +153,7 @@ koleo_loss_fn = KoLeoLoss()
 
 print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}")
 ```
-<span style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<span style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Train: 23750, Val: 1250 <br/>
 </span>
 
@@ -333,7 +333,7 @@ for epoch_idx in range(epochs):
         print(f"New best AUC: {best_auc:.4f} at epoch {epoch_idx+1}")
 ```
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">
     Before training <br/>
     Validation metrics — val_loss: 0.3296, simple_loss: 0.3156, val_auc: 0.6642, mean_positive_similarities: 0.2750, mean_negative_similarities: 0.1853, mean_positive_euclidean_distances: 1.1968, mean_negative_euclidean_distances: 1.2714, good_triplets_ratio: 0.6656 <br/>
     100it [01:57,  1.14s/it] <br/>
@@ -386,7 +386,7 @@ plot_distance_matrix_heatmap(dist_matrix, LABEL_NAMES, save_dir / "distance_matr
 ```
 
 
-<span style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<span style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Distance matrix heatmap saved at runs_koleo/20251228_174908/distance_matrix_heatmap.png <br/>
 </span>
 
@@ -395,7 +395,7 @@ plot_distance_matrix_heatmap(dist_matrix, LABEL_NAMES, save_dir / "distance_matr
 ![png](/chapter2_files/chapter2_17_1.png)
     
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Intra-class distance: mean=0.5202, std=0.0545 <br/>
 > Inter-class distance: mean=1.0350, std=0.1244 <br/>
 > Separation margin: 0.5147 <br/>
@@ -475,7 +475,7 @@ for k in ["cat", "dog", "horse", "ship"]:
 
 ```
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace;">
 > Ellipse areas (with KoLeo loss): <br/>
 >   Area of cat's ellipse = 0.227323 <br/>
 >   Area of dog's ellipse = 0.120206 <br/>
@@ -659,7 +659,7 @@ for fold_idx, (train_idx, val_idx) in enumerate(kfold.split(triplets)):
 
 ```
 
- <div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">   
+ <div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">   
     ================================================== <br/>
     Fold 1/5 <br/>
     ================================================== <br/>
@@ -721,7 +721,7 @@ print(f"  With KoLeo: {all_with_koleo.mean():.4f} +/- {all_with_koleo.std():.4f}
 
 ```
 
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">
     ====================================================================== <br/>
     AUC SCORES <br/>
     ====================================================================== <br/>
@@ -801,7 +801,7 @@ for koleo_weight in koleo_weights:
     
     print(f"Best AUC: {results[koleo_weight]['auc']:.4f}")
 ```
-<div style="color: black; background-color:#ffebcc; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">  
+<div style="color: black; background-color:#f5f5f5; padding:0.1em 0.2em; font-family:'Courier New', monospace; max-height: 300px; overflow:auto;">  
     ============================================================ </br>
     Training with koleo_weight = 1.0 </br>
     ============================================================ </br>
