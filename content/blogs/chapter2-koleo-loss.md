@@ -943,4 +943,8 @@ This trade-off highlights the importance of carefully choosing the weight parame
 
 The KoLeo loss has proven to be an effective regularization technique that can improve the distribution of embeddings in the representation space. However, as we noted, the loss is intrinsically dependent on batch size, which raises questions about the impact of gradient accumulation, a topic we will explore in the next chapter.
 
+## References
+
+- [Spreading Vectors for Similarity Search](https://arxiv.org/pdf/1806.03198) - Sablayrolles et al., ICLR 2019
+- [DINOv2: Learning Robust Visual Features without Supervision](https://arxiv.org/abs/2304.07193) - Oquab et al., 2023
 

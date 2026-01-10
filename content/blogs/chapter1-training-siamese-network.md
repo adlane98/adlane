@@ -1151,3 +1151,7 @@ In this article, we analyzed the embeddings obtained after training a siamese ne
 
 In the next part of this series, we will introduce the *KoLeo loss* to encourage a more uniform distribution of embeddings, and we will study the impact of gradient accumulation on this batch-dependent regularization.
 
+## References
+
+- [Siamese Neural Networks with Triplet Loss and Cosine Distance](https://towardsdatascience.com/siamese-neural-networks-with-tensorflow-functional-api-6aef1002c4e/) - Towards Data Science
+- [CIFAR-10 Dataset](https://www.cs.toronto.edu/~kriz/cifar.html) - University of Toronto
