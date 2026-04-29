@@ -50,7 +50,7 @@ plt.rcParams.update({
 
 ### Helper Functions
 
-Three utilities are defined in `helpers.py` and imported above.
+Three utilities are defined in `helpers.py` and imported above you can found in the [github repository](https://github.com/adlane98/learningRate_techniques).
 - `get_grad_norm` computes the L2 norm of all current parameter gradients.
 - `train_loop` wraps it for N epochs, collecting train loss, validation loss, accuracy, and learning rate at each epoch.
 - `plot_loss` is a thin matplotlib wrapper for consistent, labeled loss curves.
