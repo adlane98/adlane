@@ -3,3 +3,4 @@ public/
 archetypes/
 *.lock
 public_html/
+.DS_Store
