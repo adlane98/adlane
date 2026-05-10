@@ -1,0 +1,34 @@
+{{ with .Site.Params.education }}{{ if .enable }}
+<section id="education" class="section">
+  <div class="section__inner">
+    <div class="section__header">
+      <span class="section__num mono">03</span>
+      <h2 class="section__title">{{ .title | default "Education" }}</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="edu-list">
+      {{ range $i, $e := .items }}
+      <div class="reveal" style="transition-delay: {{ mul $i 100 }}ms">
+        <div class="edu-item">
+          <div class="edu-item__left">
+            <span class="edu-item__period mono">{{ $e.date }}</span>
+          </div>
+          <div class="edu-item__right">
+            <h3 class="edu-item__degree">{{ $e.title }}</h3>
+            {{ with $e.school }}
+              {{ if .url }}
+                <a class="edu-item__school link" data-hover href="{{ .url }}" target="_blank" rel="noopener">{{ .name }}</a>
+              {{ else }}
+                <span class="edu-item__school">{{ .name }}</span>
+              {{ end }}
+            {{ end }}
+            {{ with $e.content }}<div class="edu-item__note">{{ . | markdownify }}</div>{{ end }}
+          </div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}{{ end }}

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}" data-default-theme="{{ .Site.Params.theme.defaultTheme | default "dark" }}">
+<head>
+  {{- partial "head.html" . -}}
+  {{- block "head" . }}{{ end }}
+  <title>{{- block "title" . }}{{ .Site.Title }}{{- end -}}</title>
+</head>
+<body>
+  {{- block "body" . -}}
+    {{- partial "navbar.html" . -}}
+    <main id="content">
+      {{- block "main" . }}{{ end -}}
+    </main>
+    {{- partial "footer.html" . -}}
+  {{- end -}}
+
+  {{ $js := resources.Get "js/main.js" | resources.Minify | resources.Fingerprint }}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+</body>
+</html>

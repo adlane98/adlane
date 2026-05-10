@@ -1,0 +1,38 @@
+{{ define "title" }}{{ .Title }} | {{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+<section class="list-page">
+  <h1 class="list-page__title">{{ .Title }}</h1>
+  {{ with .Params.description }}<p class="list-page__subtitle">{{ . }}</p>{{ else }}
+    <p class="list-page__subtitle mono">// notes, deep dives, and experiments.</p>
+  {{ end }}
+
+  <div class="blog__grid">
+    {{ range .Paginator.Pages }}
+    <div class="reveal blog-card-wrap">
+      <a class="blog-card" data-hover href="{{ .RelPermalink }}">
+        {{ with .Params.image }}
+        <div class="blog-card__img-wrap">
+          <img class="blog-card__img" src="{{ . | relURL }}" alt="{{ $.Title }}" />
+          <div class="blog-card__img-overlay"></div>
+        </div>
+        {{ end }}
+        <div class="blog-card__body">
+          <div class="blog-card__meta">
+            <span class="blog-card__date mono">{{ .Date.Format ($.Site.Params.datesFormat.articleList | default "Jan 2, 2006") }}</span>
+            <div class="blog-card__tags">
+              {{ with .Params.tags }}{{ range first 2 . }}<span class="stack-badge">{{ . }}</span>{{ end }}{{ end }}
+            </div>
+          </div>
+          <h3 class="blog-card__title">{{ .Title }}</h3>
+          <p class="blog-card__excerpt">{{ with .Params.description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 160 }}{{ end }}</p>
+          <span class="blog-card__cta mono">{{ $.Site.Params.terms.read | default "Read article" }} →</span>
+        </div>
+      </a>
+    </div>
+    {{ end }}
+  </div>
+
+  {{ template "_internal/pagination.html" . }}
+</section>
+{{ end }}

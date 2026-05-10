@@ -1,0 +1,9 @@
+{{ define "title" }}404 | {{ .Site.Title }}{{ end }}
+{{ define "main" }}
+<section class="not-found">
+  <span class="not-found__code mono">// 404 — not found</span>
+  <h1 class="not-found__title">{{ .Site.Params.terms.pageNotFound | default "Page not found" }}</h1>
+  <p class="not-found__desc">The page you're looking for has moved or never existed.</p>
+  <a class="btn btn--primary" data-hover href="{{ "/" | relURL }}">Take me home</a>
+</section>
+{{ end }}

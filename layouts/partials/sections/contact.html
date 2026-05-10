@@ -1,0 +1,61 @@
+{{ with .Site.Params.contact }}{{ if .enable }}
+<section id="contact" class="section section--contact">
+  <div class="section__inner">
+    <div class="section__header">
+      <span class="section__num mono">06</span>
+      <h2 class="section__title">{{ .title | default "Get In Touch" }}</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="contact__layout">
+      <div class="reveal">
+        <p class="contact__tagline">{{ .content | markdownify }}</p>
+        <div>
+          {{ $email := "" }}
+          {{ if .btnLink }}
+            {{ $email = strings.TrimPrefix "mailto:" .btnLink }}
+          {{ end }}
+          {{ with $email }}
+            <a class="contact__email link" data-hover href="mailto:{{ . }}">{{ . }}</a>
+          {{ end }}
+          {{ with $.Site.Params.hero.socialLinks.fontAwesomeIcons }}
+          <div class="contact__socials">
+            {{ range . }}
+              {{ $label := "Link" }}
+              {{ if findRE "github" .icon }}{{ $label = "GitHub" }}
+              {{ else if findRE "linkedin" .icon }}{{ $label = "LinkedIn" }}
+              {{ else if findRE "huggingface|hugging-face" .icon }}{{ $label = "Hugging Face" }}
+              {{ else if findRE "instagram" .icon }}{{ $label = "Instagram" }}
+              {{ else if findRE "twitter|x-twitter" .icon }}{{ $label = "Twitter" }}
+              {{ end }}
+              <a class="btn btn--outline btn--sm" data-hover href="{{ .url }}" target="_blank" rel="noopener">{{ $label }}</a>
+            {{ end }}
+          </div>
+          {{ end }}
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay: 150ms">
+        {{ with .formspree }}{{ if .enable }}
+        <form class="contact__form" data-contact-form action="https://formspree.io/f/{{ .formId }}" method="POST">
+          <div class="form-field">
+            <label class="form-field__label mono" for="cf-email">Your email</label>
+            <input id="cf-email" type="email" name="email" required class="form-field__input" placeholder="{{ .emailCaption | default "you@example.com" }}" />
+          </div>
+          <div class="form-field">
+            <label class="form-field__label mono" for="cf-msg">Message</label>
+            <textarea id="cf-msg" name="message" required rows="5" class="form-field__input form-field__textarea" placeholder="{{ .messageCaption | default "What's on your mind?" }}"></textarea>
+          </div>
+          <p class="form-error" style="display:none">Something went wrong — try emailing directly.</p>
+          <button type="submit" class="btn btn--primary" data-hover>{{ $.Site.Params.contact.btnName | default "Send Message" }}</button>
+        </form>
+        <div class="contact__success contact__success--hidden">
+          <span class="contact__success-icon">✓</span>
+          <p>Message received — I'll be in touch!</p>
+        </div>
+        {{ end }}{{ end }}
+      </div>
+    </div>
+  </div>
+</section>
+{{ end }}{{ end }}

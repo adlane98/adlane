@@ -1,0 +1,12 @@
+{{ define "title" }}{{ .Site.Title }}{{ end }}
+
+{{ define "main" }}
+{{- partial "sections/hero.html" . -}}
+{{- partial "sections/about.html" . -}}
+{{- partial "sections/experience.html" . -}}
+{{- partial "sections/education.html" . -}}
+{{- partial "sections/achievements.html" . -}}
+{{- partial "sections/projects.html" . -}}
+{{- partial "sections/contact.html" . -}}
+{{- partial "sections/blog.html" . -}}
+{{ end }}

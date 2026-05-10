@@ -1,0 +1,94 @@
+{{ with .Site.Params.experience }}{{ if .enable }}
+<section id="experience" class="section">
+  <div class="section__inner">
+    <div class="section__header">
+      <span class="section__num mono">02</span>
+      <h2 class="section__title">{{ .title | default "Experience" }}</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="timeline">
+      {{ $jobs := slice }}
+      {{ range .items }}
+        {{ $company := .company }}
+        {{ $companyUrl := .companyUrl }}
+        {{ range .jobs }}
+          {{ $jobs = $jobs | append (dict "company" $company "companyUrl" $companyUrl "title" .name "date" .date "location" (.location | default "") "content" .content "stack" (.stack | default slice)) }}
+        {{ end }}
+      {{ end }}
+      {{ $total := len $jobs }}
+
+      {{ range $i, $job := $jobs }}
+        {{ $bullets := slice }}
+        {{ $paragraphs := slice }}
+        {{ $stack := $job.stack }}
+        {{ $ws := " \t\r\n" }}
+        {{ range $line := split $job.content "\n" }}
+          {{ $t := trim $line $ws }}
+          {{ if eq $t "" }}
+          {{ else if and (hasPrefix $t "- ") (gt (len $t) 2) }}
+            {{ $bullets = $bullets | append (strings.TrimPrefix "- " $t) }}
+          {{ else if hasPrefix (strings.ToLower $t) "stack:" }}
+            {{ $orig := trim (substr $t 6) $ws }}
+            {{ $parts := split $orig "," }}
+            {{ $stack = slice }}
+            {{ range $parts }}{{ $stack = $stack | append (trim . $ws) }}{{ end }}
+          {{ else }}
+            {{ $paragraphs = $paragraphs | append $t }}
+          {{ end }}
+        {{ end }}
+
+        <div class="reveal timeline__item-wrap" style="transition-delay: {{ mul $i 80 }}ms">
+          <div class="timeline__item{{ if eq $i 0 }} timeline__item--open{{ end }}">
+            <div class="timeline__marker">
+              <div class="timeline__dot"></div>
+              {{ if lt $i (sub $total 1) }}<div class="timeline__line"></div>{{ end }}
+            </div>
+            <div class="timeline__content">
+              <div class="timeline__header">
+                <div class="timeline__meta">
+                  <h3 class="timeline__title">{{ $job.title }}</h3>
+                  <div class="timeline__company">
+                    {{ if $job.companyUrl }}
+                      <a class="link" data-hover href="{{ $job.companyUrl }}" target="_blank" rel="noopener">{{ $job.company }}</a>
+                    {{ else }}
+                      <span>{{ $job.company }}</span>
+                    {{ end }}
+                    {{ with $job.location }}<span class="timeline__location mono">{{ . }}</span>{{ end }}
+                  </div>
+                </div>
+                <div class="timeline__right">
+                  <span class="timeline__period mono">{{ $job.date }}</span>
+                  <span class="timeline__chevron">+</span>
+                </div>
+              </div>
+              <div class="timeline__body">
+                {{ if $paragraphs }}
+                <div class="timeline__intro">
+                  {{ range $paragraphs }}<p>{{ . | markdownify }}</p>{{ end }}
+                </div>
+                {{ end }}
+                {{ if $bullets }}
+                <ul class="timeline__points">
+                  {{ range $bullets }}
+                    <li class="timeline__point">
+                      <span class="timeline__bullet mono">▹</span>
+                      <span>{{ . | markdownify }}</span>
+                    </li>
+                  {{ end }}
+                </ul>
+                {{ end }}
+                {{ with $stack }}
+                <div class="timeline__stack">
+                  {{ range . }}<span class="stack-badge">{{ . }}</span>{{ end }}
+                </div>
+                {{ end }}
+              </div>
+            </div>
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}{{ end }}

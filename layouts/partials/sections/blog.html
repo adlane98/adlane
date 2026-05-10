@@ -1,0 +1,39 @@
+{{ $section := .Site.GetPage "section" "blogs" }}
+{{ $count := .Site.Params.footer.recentPosts.count | default 4 }}
+{{ if and $section (gt (len $section.Pages) 0) }}
+<section id="blog" class="section">
+  <div class="section__inner">
+    <div class="section__header">
+      <span class="section__num mono">07</span>
+      <h2 class="section__title">{{ .Site.Params.footer.recentPosts.title | default "Writing" }}</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="blog__grid">
+      {{ range $i, $p := first $count $section.Pages }}
+      <div class="reveal blog-card-wrap" style="transition-delay: {{ mul $i 80 }}ms">
+        <a class="blog-card" data-hover href="{{ $p.RelPermalink }}">
+          {{ with $p.Params.image }}
+          <div class="blog-card__img-wrap">
+            <img class="blog-card__img" src="{{ . | relURL }}" alt="{{ $p.Title }}" />
+            <div class="blog-card__img-overlay"></div>
+          </div>
+          {{ end }}
+          <div class="blog-card__body">
+            <div class="blog-card__meta">
+              <span class="blog-card__date mono">{{ $p.Date.Format ($.Site.Params.datesFormat.articleRecent | default "Jan 2, 2006") }}</span>
+              <div class="blog-card__tags">
+                {{ with $p.Params.tags }}{{ range first 2 . }}<span class="stack-badge">{{ . }}</span>{{ end }}{{ end }}
+              </div>
+            </div>
+            <h3 class="blog-card__title">{{ $p.Title }}</h3>
+            <p class="blog-card__excerpt">{{ with $p.Params.description }}{{ . }}{{ else }}{{ $p.Summary | plainify | truncate 160 }}{{ end }}</p>
+            <span class="blog-card__cta mono">Read article →</span>
+          </div>
+        </a>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .a { fill: #f0f0f0; }
+    .d { fill: #a38cf3; }
+    @media (prefers-color-scheme: light) {
+      .a { fill: #111; }
+    }
+  </style>
+  <path class="a" fill-rule="evenodd"
+        d="M12 3 L22 28 L18 28 L16 23 L8 23 L6 28 L2 28 Z
+           M10 19 L14 19 L12 12 Z"/>
+  <circle class="d" cx="27" cy="26" r="3"/>
+</svg>

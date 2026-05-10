@@ -1,0 +1,77 @@
+{{ $isHome := .IsHome }}
+<nav class="navbar">
+  <div class="navbar__inner">
+    <a class="navbar__brand" href="{{ "/" | relURL }}" data-hover>
+      <span class="navbar__brand-letter">{{ slicestr (.Site.Params.title | default "A") 0 1 }}</span>
+      <span class="navbar__brand-dot">.</span>
+    </a>
+
+    {{ $links := slice
+      (dict "id" "about"        "label" "About"        "num" "01")
+      (dict "id" "experience"   "label" "Experience"   "num" "02")
+      (dict "id" "education"    "label" "Education"    "num" "03")
+      (dict "id" "achievements" "label" "Achievements" "num" "04")
+      (dict "id" "projects"     "label" "Projects"     "num" "05")
+      (dict "id" "contact"      "label" "Contact"      "num" "06")
+      (dict "id" "blog"         "label" "Blog"         "num" "07")
+    }}
+    <div class="navbar__links">
+      {{ range $links }}
+        {{ if and $isHome (ne .id "blog") }}
+          <button class="navbar__link" data-hover data-scroll-to="{{ .id }}">
+            <span class="navbar__link-num">{{ .num }}.</span>
+            {{ .label }}
+          </button>
+        {{ else }}
+          <a class="navbar__link" data-hover href="{{ if eq .id "blog" }}{{ "/blogs/" | relURL }}{{ else }}{{ printf "/#%s" .id | relURL }}{{ end }}">
+            <span class="navbar__link-num">{{ .num }}.</span>
+            {{ .label }}
+          </a>
+        {{ end }}
+      {{ end }}
+    </div>
+
+    <div class="navbar__actions">
+      <button class="theme-toggle" data-theme-toggle data-hover aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      {{ with .Site.Params.hero.button }}{{ if .enable }}
+        <a class="btn btn--outline btn--sm" data-hover href="{{ .url | relURL }}"{{ if .download }} download{{ end }}{{ if .newPage }} target="_blank" rel="noopener"{{ end }}>{{ .name }}</a>
+      {{ end }}{{ end }}
+
+      <button class="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="navbar__mobile-menu">
+    {{ range $links }}
+      {{ if and $isHome (ne .id "blog") }}
+        <button class="navbar__mobile-link" data-scroll-to="{{ .id }}">
+          <span class="navbar__link-num">{{ .num }}.</span>
+          {{ .label }}
+        </button>
+      {{ else }}
+        <a class="navbar__mobile-link" href="{{ if eq .id "blog" }}{{ "/blogs/" | relURL }}{{ else }}{{ printf "/#%s" .id | relURL }}{{ end }}">
+          <span class="navbar__link-num">{{ .num }}.</span>
+          {{ .label }}
+        </a>
+      {{ end }}
+    {{ end }}
+  </div>
+</nav>

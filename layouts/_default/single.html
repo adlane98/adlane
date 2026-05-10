@@ -1,0 +1,83 @@
+{{ define "title" }}{{ .Title }} | {{ .Site.Title }}{{ end }}
+
+{{ define "body" }}
+<div class="progress-bar"></div>
+
+<nav class="post-nav">
+  <div class="post-nav__inner">
+    <a class="post-nav__back" data-hover href="{{ "/" | relURL }}">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      {{ .Site.Params.title | default "Adlane Ladjal" }}
+    </a>
+    <span class="post-nav__sep">/</span>
+    <span class="post-nav__title">{{ .Title }}</span>
+    <div class="post-nav__actions">
+      <button class="theme-toggle" data-theme-toggle data-hover aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="article-hero">
+  <div class="article-hero__meta">
+    {{ range .Params.tags }}<span class="tag">{{ . }}</span>{{ end }}
+    <span class="meta-dot">·</span>
+    <span class="meta-text">{{ .Date.Format (.Site.Params.datesFormat.article | default "Jan 2, 2006") }}</span>
+    {{ if .Site.Params.singlePages.readTime.enable | default true }}
+    <span class="meta-dot">·</span>
+    <span class="meta-text">{{ .ReadingTime }} {{ .Site.Params.singlePages.readTime.content | default "min read" }}</span>
+    {{ end }}
+  </div>
+
+  <h1 class="article-hero__title">{{ .Title }}</h1>
+  {{ with .Params.description }}<p class="article-hero__subtitle">{{ . }}</p>{{ end }}
+
+  <div class="article-hero__byline">
+    {{ with .Site.Params.about.image }}<img class="byline__avatar" src="{{ . | relURL }}" alt="{{ $.Site.Params.title }}" />{{ end }}
+    <div>
+      <div class="byline__author">{{ with .Params.author }}{{ . }}{{ else }}{{ .Site.Params.title | default "Adlane Ladjal" }}{{ end }}</div>
+      <div class="byline__info">{{ .Site.Params.hero.role | default "Deep Learning &amp; Computer Vision Engineer" }}</div>
+    </div>
+  </div>
+
+  {{ with .Params.image }}<img class="article-hero__cover" src="{{ . | relURL }}" alt="{{ $.Title }}" />{{ end }}
+</header>
+
+<div class="article-layout">
+  {{ if .Params.toc | default true }}
+  <aside class="toc">
+    <div class="toc__label">// Contents</div>
+    {{ .TableOfContents }}
+  </aside>
+  {{ else }}
+  <aside></aside>
+  {{ end }}
+
+  <article class="article-content">
+    {{ .Content }}
+  </article>
+
+  <div></div>
+</div>
+
+<footer class="article-footer">
+  <div class="article-footer__nav">
+    {{ with .PrevInSection }}
+      <a class="post-nav-link post-nav-link--prev" href="{{ .RelPermalink }}">
+        <span class="post-nav-label mono">← Previous</span>
+        <span class="post-nav-title">{{ .Title }}</span>
+      </a>
+    {{ else }}<div></div>{{ end }}
+    {{ with .NextInSection }}
+      <a class="post-nav-link post-nav-link--next" href="{{ .RelPermalink }}">
+        <span class="post-nav-label mono">Next →</span>
+        <span class="post-nav-title">{{ .Title }}</span>
+      </a>
+    {{ else }}<div></div>{{ end }}
+  </div>
+</footer>
+
+{{ partial "footer.html" . }}
+{{ end }}

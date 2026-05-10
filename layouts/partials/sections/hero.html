@@ -1,0 +1,73 @@
+{{ with .Site.Params.hero }}{{ if .enable }}
+<div class="hero">
+  <div class="hero__bg" data-parallax>
+    <div class="hero__grid"></div>
+    <div class="hero__orb hero__orb--1"></div>
+    <div class="hero__orb hero__orb--2"></div>
+    <div class="hero__orb hero__orb--3"></div>
+  </div>
+
+  <div class="hero__content">
+    {{ with .image }}
+    <div class="hero__photo-wrap">
+      <div class="hero__photo-frame">
+        <div class="hero__corner hero__corner--tl"></div>
+        <div class="hero__corner hero__corner--tr"></div>
+        <div class="hero__corner hero__corner--bl"></div>
+        <div class="hero__corner hero__corner--br"></div>
+        <div class="hero__scan-line"></div>
+        <img class="hero__photo" src="{{ . | relURL }}" alt="{{ $.Site.Params.title }}" />
+      </div>
+      {{ with $.Site.Params.hero.photoLabel }}
+        <div class="hero__photo-label"><span class="mono">{{ . }}</span></div>
+      {{ end }}
+    </div>
+    {{ end }}
+
+    <div class="hero__text">
+      <p class="hero__greeting mono">
+        <span class="hero__greeting-line"></span>
+        {{ .intro | default "Hello, I'm" }}
+      </p>
+      <h1 class="hero__name">{{ .title | default "Adlane." }}</h1>
+      {{ with .role }}
+      <div class="hero__role mono">
+        <span class="hero__role-accent">&gt; </span>{{ . }}{{ with $.Site.Params.hero.specialization }}<span class="hero__role-sep"> / </span>{{ . }}{{ end }}
+      </div>
+      {{ end }}
+
+      {{ $tagline := .subtitle | default "" }}
+      <div class="hero__tagline" data-typewriter data-lines="{{ replace $tagline "\n" "|" }}">
+      </div>
+
+      <div class="hero__actions">
+        {{ with .button }}{{ if .enable }}
+          <a class="btn btn--primary" data-hover href="{{ .url | relURL }}"{{ if .download }} download{{ end }}{{ if .newPage }} target="_blank" rel="noopener"{{ end }}>{{ .name }}</a>
+        {{ end }}{{ end }}
+        <a class="btn btn--ghost" data-hover href="#about" data-scroll-to="about">{{ $.Site.Params.hero.exploreCta | default "Explore my work ↓" }}</a>
+      </div>
+
+      {{ with .socialLinks.fontAwesomeIcons }}
+      <div class="hero__socials">
+        {{ range . }}
+          {{ $label := "→" }}
+          {{ if findRE "github" .icon }}{{ $label = "GH" }}
+          {{ else if findRE "linkedin" .icon }}{{ $label = "LI" }}
+          {{ else if findRE "huggingface|hugging-face" .icon }}{{ $label = "HF" }}
+          {{ else if findRE "instagram" .icon }}{{ $label = "IG" }}
+          {{ else if findRE "twitter|x-twitter" .icon }}{{ $label = "TW" }}
+          {{ else if findRE "mail|envelope" .icon }}{{ $label = "ML" }}
+          {{ end }}
+          <a class="hero__social mono" data-hover href="{{ .url }}" target="_blank" rel="noopener noreferrer">{{ $label }}</a>
+        {{ end }}
+      </div>
+      {{ end }}
+    </div>
+  </div>
+
+  <a class="hero__scroll" href="#about" data-scroll-to="about" data-hover>
+    <div class="hero__scroll-line"></div>
+    <span class="mono hero__scroll-label">scroll</span>
+  </a>
+</div>
+{{ end }}{{ end }}

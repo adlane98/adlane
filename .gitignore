@@ -4,3 +4,4 @@ archetypes/
 *.lock
 public_html/
 .DS_Store
+mock-up

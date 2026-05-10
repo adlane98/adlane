@@ -1,0 +1,42 @@
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
+{{/* SVG favicon — auto-switches between dark and light themes via prefers-color-scheme */}}
+<link rel="icon" type="image/svg+xml" href="{{ "/favicon.svg" | relURL }}" />
+{{ with .Site.Params.favicon }}<link rel="alternate icon" href="{{ . | relURL }}" />{{ end }}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+{{ $main := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint }}
+<link rel="stylesheet" href="{{ $main.RelPermalink }}" integrity="{{ $main.Data.Integrity }}" />
+
+{{ $accent := .Site.Params.accentColor | default "#a38cf3" }}
+<style>
+  :root { --accent: {{ $accent }}; --accent-dim: {{ $accent }}26; }
+  [data-theme="light"] { --accent: {{ $accent }}; --accent-dim: {{ $accent }}14; }
+  body {
+    font-size: {{ .Site.Params.font.fontSize | default "1rem" }};
+    font-weight: {{ .Site.Params.font.fontWeight | default "400" }};
+    line-height: {{ .Site.Params.font.lineHeight | default "1.65" }};
+    text-align: {{ .Site.Params.font.textAlign | default "left" }};
+  }
+</style>
+
+{{ if (.Params.mathjax | default false) }}
+  <script>window.MathJax = { tex: { inlineMath: [['\\(','\\)'],['$','$']], displayMath: [['$$','$$'],['\\[','\\]']] }, options: { skipHtmlTags: ['script','noscript','style','textarea'] } };</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+{{ end }}
+
+{{ if .IsPage }}
+  {{/* Highlight.js for blog posts (the Hugo Chroma is also fine, but we use github-dark theme to match mock-up) */}}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+  <script>document.addEventListener('DOMContentLoaded', function () { if (window.hljs) { hljs.highlightAll(); } });</script>
+{{ end }}
+
+{{ template "_internal/opengraph.html" . }}
+{{ template "_internal/twitter_cards.html" . }}
+{{ with .Site.GoogleAnalytics }}{{ template "_internal/google_analytics.html" $ }}{{ end }}

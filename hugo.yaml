@@ -38,9 +38,13 @@ languages:
         animate: true
       
         theme:
-          # disableThemeToggle: true
-          # defaultTheme: "light" # dark
-      
+          defaultTheme: "dark"  # dark | light
+          # disableThemeToggle: false
+
+        # Accent color for the new design (CSS custom property --accent).
+        # Default is the mock-up's Electric Blue.
+        accentColor: "#a38cf3"
+
         font:
           fontSize: 1rem # default: 1rem
           fontWeight: 400 # default: 400
@@ -87,14 +91,17 @@ languages:
         # Hero
         hero:
           enable: true
-          intro: "Hi, I'm "
+          intro: "Hello, I'm"
           title: "Adlane."
-          subtitle: "I teach machines to help us see."
+          role: "Deep Learning Engineer"
+          specialization: "Computer Vision"
+          photoLabel: "[ CV_ENGINEER ]"
+          exploreCta: "Explore my work ↓"
+          # The subtitle is rendered with a typewriter effect.
+          # Use \n to split into multiple lines.
+          subtitle: "I teach machines\nto help us see."
           content: "I'm a passionate deep learning engineer. I leverage advanced AI and computer vision technologies to develop systems that enhance visual understanding and interaction."
           image: /images/pdp.jpeg
-          bottomImage:
-            enable: true
-          # roundImage: true # Make hero image circular | default false
           button:
             enable: true
             name: "Resume"
@@ -107,10 +114,10 @@ languages:
                 url: https://github.com/adlane98
               - icon: fab fa-linkedin
                 url: https://www.linkedin.com/in/adlane-ladjal/
+              - icon: huggingface
+                url: https://huggingface.co/adlito
               - icon: fab fa-instagram
                 url: https://instagram.com/shotsbyadlane
-              - icon: fab fa-x-twitter
-                url: https://twitter.com/adlaneladjal
             
         # About
         about:
@@ -372,9 +379,13 @@ languages:
         animate: true
       
         theme:
-          # disableThemeToggle: true
-          # defaultTheme: "light" # dark
-      
+          defaultTheme: "dark"  # dark | light
+          # disableThemeToggle: false
+
+        # Accent color for the new design (CSS custom property --accent).
+        # Default is the mock-up's Electric Blue.
+        accentColor: "#a38cf3"
+
         font:
           fontSize: 1rem # default: 1rem
           fontWeight: 400 # default: 400
@@ -421,14 +432,15 @@ languages:
         # Hero
         hero:
           enable: true
-          intro: "Bonjour, je m'appelle "
+          intro: "Bonjour, je m'appelle"
           title: "Adlane."
-          subtitle: "Créateur d'IA visuelles innovantes."
+          role: "Ingénieur Deep Learning"
+          specialization: "Vision par Ordinateur"
+          photoLabel: "[ CV_ENGINEER ]"
+          exploreCta: "Découvrir mon travail ↓"
+          subtitle: "J'apprends aux machines\nà nous aider à voir."
           content: "Ingénieur en Deep Learning, j'utilise des technologies avancées d'IA et de vision par ordinateur pour développer des systèmes qui améliorent la compréhension visuelle d'images de toutes sortes."
           image: /images/pdp.jpeg
-          bottomImage:
-            enable: true
-          # roundImage: true # Make hero image circular | default false
           button:
             enable: true
             name: "CV"
@@ -441,10 +453,10 @@ languages:
                 url: https://github.com/adlane98
               - icon: fab fa-linkedin
                 url: https://www.linkedin.com/in/adlane-ladjal/
+              - icon: huggingface
+                url: https://huggingface.co/adlito
               - icon: fab fa-instagram
                 url: https://instagram.com/shotsbyadlane
-              - icon: fab fa-x-twitter
-                url: https://twitter.com/adlaneladjal
       
         # About
         about:
@@ -689,6 +701,12 @@ markup:
   goldmark:
     renderer:
       unsafe: true
+  highlight:
+    # Let highlight.js handle code highlighting at runtime
+    # so the github-dark theme matches the mock-up.
+    noClasses: false
+    codeFences: true
+    guessSyntax: false
 
 Menus:
  main:

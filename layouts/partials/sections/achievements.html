@@ -1,0 +1,29 @@
+{{ with .Site.Params.achievements }}{{ if .enable }}
+<section id="achievements" class="section">
+  <div class="section__inner">
+    <div class="section__header">
+      <span class="section__num mono">04</span>
+      <h2 class="section__title">{{ .title | default "Achievements" }}</h2>
+      <div class="section__line"></div>
+    </div>
+
+    <div class="achieve-grid">
+      {{ range $i, $a := .items }}
+      <div class="reveal" style="transition-delay: {{ mul $i 120 }}ms">
+        <div class="achieve-card">
+          {{ with $a.image }}
+          <div class="achieve-card__img-wrap">
+            <img class="achieve-card__img" src="{{ . | relURL }}" alt="{{ $a.title }}" />
+          </div>
+          {{ end }}
+          <div class="achieve-card__body">
+            <h3 class="achieve-card__title">{{ $a.title }}</h3>
+            <p class="achieve-card__desc">{{ $a.content }}</p>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}{{ end }}
