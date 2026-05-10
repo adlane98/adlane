@@ -13,8 +13,8 @@
   --accent-dim: #a38cf326;
   --accent-2: oklch(72% 0.14 185);
   --text: oklch(94% 0.008 240);
-  --text-muted: oklch(58% 0.01 240);
-  --text-dim: oklch(36% 0.01 240);
+  --text-muted: oklch(72% 0.01 240);
+  --text-dim: oklch(54% 0.01 240);
   --code-bg: oklch(8% 0.012 240);
   --output-bg: oklch(11% 0.014 240);
   --font-scale: 1;
@@ -492,7 +492,7 @@ button { background: none; border: none; font-family: inherit; font-size: inheri
 .skill-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
 /* ── Timeline ────────────────────────────────────────────────────────────── */
-.timeline { display: flex; flex-direction: column; gap: 0; }
+.timeline { display: flex; flex-direction: column; gap: 18px; }
 .timeline__item-wrap { width: 100%; }
 .timeline__item {
   display: grid;
@@ -664,9 +664,7 @@ button { background: none; border: none; font-family: inherit; font-size: inheri
 .achieve-card {
   background: var(--bg-surface); border: 1px solid var(--border);
   border-radius: 12px; overflow: hidden; display: flex; gap: 0;
-  transition: border-color 0.2s, transform 0.25s;
 }
-.achieve-card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .achieve-card__img-wrap { width: 90px; flex-shrink: 0; }
 .achieve-card__img { width: 100%; height: 100%; object-fit: cover; }
 .achieve-card__body { padding: 18px; display: flex; flex-direction: column; gap: 6px; }
