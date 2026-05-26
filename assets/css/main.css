@@ -638,6 +638,12 @@ button { background: none; border: none; font-family: inherit; font-size: inheri
 }
 .project-card__link:hover { color: var(--accent); }
 .project-card__link svg { width: 20px; height: 20px; }
+.project-card__link-hf {
+  display: inline-flex; width: 20px; height: 20px; line-height: 0;
+}
+.project-card__link-hf svg { width: 20px; height: 20px; display: block; }
+.project-card__link-hf .hf-accent { transition: fill 0.2s; }
+.project-card__link:hover .project-card__link-hf .hf-accent { fill: var(--accent); }
 
 /* ── Education ───────────────────────────────────────────────────────────── */
 .edu-list { display: flex; flex-direction: column; gap: 0; }
