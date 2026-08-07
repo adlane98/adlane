@@ -48,16 +48,22 @@ jobs:
           echo "built $pages HTML pages"
           [ "$pages" -gt 10 ] || { echo "::error::suspiciously few pages ($pages)"; exit 1; }
 
-      - name: Upload to OVH over FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      # SFTP, not FTPS: OVH answers AUTH TLS on port 21 with
+      # "500 This security scheme is not implemented", and FileZilla reaches
+      # this host over SSH on port 22.
+      - name: Upload to OVH over SFTP
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           server: ${{ secrets.OVH_FTP_HOST }}
           username: ${{ secrets.OVH_FTP_USER }}
           password: ${{ secrets.OVH_FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-          local-dir: ./public/
-          # Absolute path, matching what FileZilla shows for the docroot.
-          # If a run fails with "directory not found", the FTP login is
-          # chrooted to /home/ynirnft and this becomes ./www/ instead.
-          server-dir: /home/ynirnft/www/
+          port: 22
+          local_path: './public/*'
+          remote_path: '/home/ynirnft/www'
+          # Leave files the build doesn't produce (a hand-made .htaccess,
+          # say) alone rather than wiping them.
+          delete_remote_files: false
+          # Syncs with rsync, so only changed files move — this site is
+          # 2184 files / 31 MB. If a run fails saying rsync is missing on
+          # the server, set this to true for a slower full SFTP upload.
+          sftp_only: false
