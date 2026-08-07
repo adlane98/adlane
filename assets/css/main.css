@@ -810,11 +810,14 @@ button { background: none; border: none; font-family: inherit; font-size: inheri
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-subtle);
-  padding: 0 clamp(16px, 4vw, 60px);
+  /* No gutter here: the bar stays full-bleed, the gutter lives on __inner */
 }
 .post-nav__inner {
   display: flex; align-items: center; gap: 20px;
-  height: 60px; max-width: 1200px; margin: 0 auto;
+  /* Same box geometry as .article-hero / .article-layout — 1100px max-width with
+     the gutter *inside* it — so the breadcrumb lines up with the title below. */
+  height: 60px; max-width: 1100px; margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 60px);
 }
 .post-nav__back {
   display: flex; align-items: center; gap: 8px;
@@ -855,7 +858,7 @@ button { background: none; border: none; font-family: inherit; font-size: inheri
 }
 .article-hero__subtitle {
   font-size: 1.1rem; color: var(--text-muted); line-height: 1.65;
-  max-width: 620px; margin-bottom: 28px;
+  margin-bottom: 28px;
 }
 .article-hero__byline {
   display: flex; align-items: center; gap: 12px;
@@ -884,6 +887,9 @@ button { background: none; border: none; font-family: inherit; font-size: inheri
   padding: 0 clamp(16px, 4vw, 60px);
   align-items: start;
 }
+
+/* Pages with `toc: false` give the article the full 1100px, matching hero + footer */
+.article-layout--wide { grid-template-columns: minmax(0, 1fr); }
 
 .toc {
   position: sticky; top: 80px;

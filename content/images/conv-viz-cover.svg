@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="An input volume convolved with a kernel volume, producing a stack of output feature maps">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0d12"/>
+      <stop offset="100%" stop-color="#12161e"/>
+    </linearGradient>
+    <filter id="glow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="120" y="80" font-family="ui-monospace, SFMono-Regular, monospace" font-size="22" fill="#6b7484" letter-spacing="3">// CONVOLUTIONS, VISUALIZED</text>
+
+  <!-- ── input volume: 3 channel slices, back to front ──────────────────── -->
+  <g stroke="#2f3849" stroke-width="2">
+    <rect x="168" y="202" width="250" height="250" rx="4" fill="#161b24"/>
+    <rect x="144" y="226" width="250" height="250" rx="4" fill="#181e28"/>
+    <rect x="120" y="250" width="250" height="250" rx="4" fill="#1b212c"/>
+  </g>
+  <g stroke="#2a3242" stroke-width="1.25" opacity="0.9">
+    <path d="M170 250V500M220 250V500M270 250V500M320 250V500"/>
+    <path d="M120 300H370M120 350H370M120 400H370M120 450H370"/>
+  </g>
+  <!-- receptive field patch on the front face -->
+  <g filter="url(#glow)">
+    <rect x="170" y="300" width="150" height="150" rx="4" fill="#a38cf3" fill-opacity="0.16" stroke="#a38cf3" stroke-width="2.5"/>
+  </g>
+
+  <text x="245" y="556" font-family="ui-monospace, SFMono-Regular, monospace" font-size="19" fill="#6b7484" text-anchor="middle" letter-spacing="2">INPUT</text>
+  <text x="245" y="584" font-family="ui-monospace, SFMono-Regular, monospace" font-size="21" fill="#a38cf3" text-anchor="middle">H × W × C_in</text>
+
+  <!-- ── convolution operator ───────────────────────────────────────────── -->
+  <text x="455" y="372" font-family="ui-monospace, SFMono-Regular, monospace" font-size="42" fill="#4a5364" text-anchor="middle">∗</text>
+
+  <!-- ── kernel volume: 3 slices ────────────────────────────────────────── -->
+  <g filter="url(#glow)">
+    <g stroke="#a38cf3" stroke-width="2.5">
+      <rect x="540" y="280" width="80" height="80" rx="3" fill="#a38cf3" fill-opacity="0.18"/>
+      <rect x="520" y="300" width="80" height="80" rx="3" fill="#a38cf3" fill-opacity="0.26"/>
+      <rect x="500" y="320" width="80" height="80" rx="3" fill="#a38cf3" fill-opacity="0.34"/>
+    </g>
+  </g>
+  <g stroke="#c5b4ff" stroke-width="1.25" opacity="0.55">
+    <path d="M526.7 320V400M553.3 320V400"/>
+    <path d="M500 346.7H580M500 373.3H580"/>
+  </g>
+
+  <text x="560" y="556" font-family="ui-monospace, SFMono-Regular, monospace" font-size="19" fill="#6b7484" text-anchor="middle" letter-spacing="2">KERNEL</text>
+  <text x="560" y="584" font-family="ui-monospace, SFMono-Regular, monospace" font-size="21" fill="#a38cf3" text-anchor="middle">k × k × C_in</text>
+
+  <!-- ── arrow ──────────────────────────────────────────────────────────── -->
+  <g transform="translate(650 350)" stroke="#4a5364" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M0 0H72"/>
+    <path d="M52 -20 72 0 52 20"/>
+  </g>
+
+  <!-- ── output feature maps: one slice per filter ──────────────────────── -->
+  <g stroke="#3fbfae" stroke-width="2.5">
+    <rect x="850" y="210" width="170" height="170" rx="4" fill="#3fbfae" fill-opacity="0.10"/>
+    <rect x="832" y="228" width="170" height="170" rx="4" fill="#3fbfae" fill-opacity="0.13"/>
+    <rect x="814" y="246" width="170" height="170" rx="4" fill="#3fbfae" fill-opacity="0.16"/>
+    <rect x="796" y="264" width="170" height="170" rx="4" fill="#3fbfae" fill-opacity="0.19"/>
+    <rect x="778" y="282" width="170" height="170" rx="4" fill="#3fbfae" fill-opacity="0.22"/>
+    <rect x="760" y="300" width="170" height="170" rx="4" fill="#3fbfae" fill-opacity="0.26"/>
+  </g>
+  <g stroke="#8fe6da" stroke-width="1.25" opacity="0.35">
+    <path d="M794 300V470M828 300V470M862 300V470M896 300V470"/>
+    <path d="M760 334H930M760 368H930M760 402H930M760 436H930"/>
+  </g>
+  <!-- the single output cell the highlighted patch maps to -->
+  <g filter="url(#glow)">
+    <rect x="794" y="334" width="34" height="34" rx="3" fill="#3fbfae" stroke="#3fbfae" stroke-width="2"/>
+  </g>
+
+  <text x="890" y="556" font-family="ui-monospace, SFMono-Regular, monospace" font-size="19" fill="#6b7484" text-anchor="middle" letter-spacing="2">OUTPUT</text>
+  <text x="890" y="584" font-family="ui-monospace, SFMono-Regular, monospace" font-size="21" fill="#a38cf3" text-anchor="middle">H' × W' × C_out</text>
+</svg>

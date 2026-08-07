@@ -42,24 +42,27 @@
     </div>
   </div>
 
-  {{ with .Params.image }}<img class="article-hero__cover" src="{{ . | relURL }}" alt="{{ $.Title }}" />{{ end }}
+  {{/* `heroImage: false` keeps the image as the listing thumbnail but drops it
+       from the article itself. isset, not `default`, so an explicit false wins. */}}
+  {{ $showCover := true }}
+  {{ if isset .Params "heroimage" }}{{ $showCover = .Params.heroImage }}{{ end }}
+  {{ if $showCover }}{{ with .Params.image }}<img class="article-hero__cover" src="{{ . | relURL }}" alt="{{ $.Title }}" />{{ end }}{{ end }}
 </header>
 
-<div class="article-layout">
-  {{ if .Params.toc | default true }}
+{{ $hasToc := .Params.toc | default true }}
+<div class="article-layout{{ if not $hasToc }} article-layout--wide{{ end }}">
+  {{ if $hasToc }}
   <aside class="toc">
     <div class="toc__label">// Contents</div>
     {{ .TableOfContents }}
   </aside>
-  {{ else }}
-  <aside></aside>
   {{ end }}
 
   <article class="article-content">
     {{ .Content }}
   </article>
 
-  <div></div>
+  {{ if $hasToc }}<div></div>{{ end }}
 </div>
 
 <footer class="article-footer">

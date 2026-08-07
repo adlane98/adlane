@@ -1,0 +1,739 @@
+<div class="conv-pg" id="conv-pg-{{ .Ordinal }}">
+  <style>
+  .conv-pg { --cell: 22px; --gap: 2px; margin: 32px 0; }
+  .conv-pg__frame { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--bg-surface); }
+  .conv-pg__header {
+    padding: 12px 20px; border-bottom: 1px solid var(--border-subtle);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .conv-pg__label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.12em; color: var(--accent); text-transform: uppercase;
+  }
+  .conv-pg__header-right { display: flex; align-items: center; gap: 14px; }
+  .conv-pg__step { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-dim); }
+  .conv-pg__play {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 12px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--bg-elevated);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+    color: var(--text-muted); cursor: pointer; transition: color 0.2s, border-color 0.2s;
+  }
+  .conv-pg__play:hover { color: var(--accent); border-color: var(--accent); }
+  .conv-pg__play svg { width: 11px; height: 11px; flex-shrink: 0; }
+  .conv-pg__play .icon-pause { display: block; }
+  .conv-pg__play .icon-play { display: none; }
+  .conv-pg__play[aria-pressed="true"] { color: var(--accent); border-color: oklch(from var(--accent) l c h / 0.45); }
+  .conv-pg__play[aria-pressed="true"] .icon-pause { display: none; }
+  .conv-pg__play[aria-pressed="true"] .icon-play { display: block; }
+
+  .conv-pg__body { display: grid; grid-template-columns: 210px minmax(0, 1fr); }
+
+  /* ── Controls ─────────────────────────────────────────────────────────── */
+  .conv-pg__controls {
+    padding: 20px; border-right: 1px solid var(--border-subtle);
+    display: flex; flex-direction: column; gap: 15px; background: var(--bg-elevated);
+  }
+  .conv-pg__ctrl { display: flex; flex-direction: column; gap: 7px; }
+  .conv-pg__ctrl-label {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.04em;
+  }
+  .conv-pg__ctrl-value { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--accent); }
+  .conv-pg input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 4px; border-radius: 2px;
+    background: var(--border); outline: none; padding: 0; margin: 0;
+  }
+  .conv-pg input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: var(--accent); cursor: pointer; box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  .conv-pg input[type="range"]::-moz-range-thumb {
+    width: 15px; height: 15px; border-radius: 50%; border: none;
+    background: var(--accent); cursor: pointer; box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  .conv-pg__divider { height: 1px; background: var(--border-subtle); }
+  .conv-pg__checkbox {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 0.78rem; color: var(--text-muted); cursor: pointer;
+  }
+  .conv-pg__checkbox input { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
+  /* ── Canvas ───────────────────────────────────────────────────────────── */
+  .conv-pg__canvas {
+    padding: 26px 20px; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start; gap: 26px; min-width: 0;
+  }
+  .conv-pg__stage {
+    display: flex; align-items: center; justify-content: center;
+    gap: clamp(14px, 4vw, 40px); flex-wrap: wrap; width: 100%;
+  }
+  .conv-pg__col { display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: 100%; }
+  .conv-pg__col-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase;
+  }
+  .conv-pg__dims { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--accent); text-align: center; }
+  .conv-pg__grid-wrap { background: var(--bg); border-radius: 8px; padding: 8px; max-width: 100%; overflow: auto; }
+  .conv-pg__grid { display: grid; gap: var(--gap); }
+  .conv-pg__cell {
+    width: var(--cell); height: var(--cell); border-radius: 3px;
+    background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+    transition: background 0.12s, border-color 0.12s, transform 0.12s;
+  }
+  .conv-pg__cell--pad { background: transparent; border: 1px dashed var(--border); opacity: 0.5; }
+  .conv-pg__cell--active {
+    background: var(--accent); border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-dim); transform: scale(1.06);
+  }
+  .conv-pg__cell--out {
+    background: var(--accent-2); border-color: var(--accent-2);
+    box-shadow: 0 0 12px oklch(from var(--accent-2) l c h / 0.4); transform: scale(1.12);
+  }
+
+  /* Arrow: horizontal when the two grids sit side by side, vertical when they stack */
+  .conv-pg__arrow { display: flex; align-items: center; justify-content: center; color: var(--text-dim); flex-shrink: 0; }
+  .conv-pg__arrow svg { transition: transform 0.25s ease; }
+  .conv-pg__stage--stacked { flex-direction: column; gap: 16px; }
+  .conv-pg__stage--stacked .conv-pg__arrow { width: 100%; }
+  .conv-pg__stage--stacked .conv-pg__arrow svg { transform: rotate(90deg); }
+
+  .conv-pg__legend {
+    display: flex; gap: 18px; flex-wrap: wrap; justify-content: center;
+    font-size: 0.73rem; color: var(--text-dim);
+  }
+  .conv-pg__legend span { display: flex; align-items: center; gap: 6px; }
+  .conv-pg__legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+  /* ── 3D volumes ───────────────────────────────────────────────────────── */
+  .conv-pg__viz3d {
+    width: 100%; border-top: 1px solid var(--border-subtle); padding-top: 22px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .conv-pg__scenes { display: flex; gap: 18px; width: 100%; flex-wrap: wrap; }
+  .conv-pg__scene-box {
+    flex: 1 1 260px; min-width: 0;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .conv-pg__scene { width: 100%; height: 200px; perspective: 900px; display: flex; align-items: center; justify-content: center; }
+  .conv-pg__rig {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d; transform: rotateX(58deg) rotateZ(-28deg);
+    animation: conv-pg-spin 26s linear infinite;
+  }
+  .conv-pg--paused .conv-pg__rig { animation-play-state: paused; }
+  @keyframes conv-pg-spin {
+    from { transform: rotateX(58deg) rotateZ(-28deg); }
+    to   { transform: rotateX(58deg) rotateZ(332deg); }
+  }
+  .conv-pg__filter { position: absolute; transform-style: preserve-3d; }
+  /* No preserve-3d here: the highlight cell is meant to lie flat on its plate */
+  .conv-pg__layer { position: absolute; border: 1.5px solid var(--accent); border-radius: 2px; }
+  .conv-pg__layer--out { border-color: var(--accent-2); }
+  .conv-pg__vol-cell {
+    position: absolute; background: var(--accent-2); border-radius: 1px;
+    box-shadow: 0 0 6px var(--accent-2);
+  }
+
+  /* ── Formulas ─────────────────────────────────────────────────────────── */
+  .conv-pg__formulas {
+    width: 100%; border-top: 1px solid var(--border-subtle); padding-top: 22px;
+    display: flex; flex-direction: column; gap: 26px;
+  }
+  .conv-pg__formula { display: flex; flex-direction: column; gap: 11px; align-items: center; }
+  .conv-pg__formula-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase;
+  }
+  .conv-pg__row {
+    display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.86rem; text-align: center;
+  }
+  .conv-pg__row .fx { color: var(--text-dim); }
+  .conv-pg__row .fnum { color: var(--accent); font-weight: 600; }
+  .conv-pg__row .feq { color: var(--text); }
+  .conv-pg__row .fres { color: var(--accent); margin-left: 6px; }
+  .conv-pg__chips { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .conv-pg__chip {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 9px 16px; border-radius: 10px;
+    background: var(--accent-dim); border: 1px solid oklch(from var(--accent) l c h / 0.25);
+  }
+  .conv-pg__chip-label { font-size: 0.62rem; letter-spacing: 0.08em; color: var(--text-dim); text-transform: uppercase; }
+  .conv-pg__chip-value { font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 700; color: var(--accent); }
+
+  /* ── Live PyTorch snippet ─────────────────────────────────────────────── */
+  .conv-pg__code-block {
+    width: 100%; border-top: 1px solid var(--border-subtle); padding-top: 22px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .conv-pg__code-block pre { width: 100%; margin: 0; }
+  .conv-pg__code-block code { white-space: pre; }
+
+  @media (max-width: 760px) {
+    .conv-pg { --cell: 17px; }
+    .conv-pg__body { grid-template-columns: 1fr; }
+    .conv-pg__controls { border-right: none; border-bottom: 1px solid var(--border-subtle); }
+    .conv-pg__canvas { padding: 22px 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .conv-pg__rig { animation: none; }
+    .conv-pg__cell { transition: none; }
+  }
+  </style>
+
+  <div class="conv-pg__frame">
+    <div class="conv-pg__header">
+      <span class="conv-pg__label">// interactive playground</span>
+      <div class="conv-pg__header-right">
+        <span class="conv-pg__step" data-cp="step">step 0 / 0</span>
+        <button type="button" class="conv-pg__play" data-cp="play" aria-pressed="false" data-hover>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
+          <span data-cp="play-label">pause</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="conv-pg__body">
+      <div class="conv-pg__controls">
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Input height</span><span class="conv-pg__ctrl-value" data-cp-val="ih">7</span></div>
+          <input type="range" data-cp-in="ih" min="3" max="16" value="7" aria-label="Input height" data-hover />
+        </div>
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Input width</span><span class="conv-pg__ctrl-value" data-cp-val="iw">7</span></div>
+          <input type="range" data-cp-in="iw" min="3" max="16" value="7" aria-label="Input width" data-hover />
+        </div>
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Input channels</span><span class="conv-pg__ctrl-value" data-cp-val="c">3</span></div>
+          <input type="range" data-cp-in="c" min="1" max="8" value="3" aria-label="Input channels" data-hover />
+        </div>
+
+        <div class="conv-pg__divider"></div>
+
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Kernel size</span><span class="conv-pg__ctrl-value" data-cp-val="k">3</span></div>
+          <input type="range" data-cp-in="k" min="1" max="16" value="3" aria-label="Kernel size" data-hover />
+        </div>
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Stride</span><span class="conv-pg__ctrl-value" data-cp-val="s">1</span></div>
+          <input type="range" data-cp-in="s" min="1" max="5" value="1" aria-label="Stride" data-hover />
+        </div>
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Padding</span><span class="conv-pg__ctrl-value" data-cp-val="p">0</span></div>
+          <input type="range" data-cp-in="p" min="0" max="5" value="0" aria-label="Padding" data-hover />
+        </div>
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Dilation</span><span class="conv-pg__ctrl-value" data-cp-val="d">1</span></div>
+          <input type="range" data-cp-in="d" min="1" max="5" value="1" aria-label="Dilation" data-hover />
+        </div>
+
+        <div class="conv-pg__divider"></div>
+
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Output filters</span><span class="conv-pg__ctrl-value" data-cp-val="f">1</span></div>
+          <input type="range" data-cp-in="f" min="1" max="8" value="1" aria-label="Output filters" data-hover />
+        </div>
+        <label class="conv-pg__checkbox" data-hover><input type="checkbox" data-cp-bias checked /> include bias term</label>
+
+        <div class="conv-pg__divider"></div>
+
+        <div class="conv-pg__ctrl">
+          <div class="conv-pg__ctrl-label"><span>Animation speed</span><span class="conv-pg__ctrl-value" data-cp-val="speed">2&times;</span></div>
+          <input type="range" data-cp-in="speed" min="1" max="4" value="2" aria-label="Animation speed" data-hover />
+        </div>
+      </div>
+
+      <div class="conv-pg__canvas">
+        <div class="conv-pg__stage" data-cp="stage">
+          <div class="conv-pg__col" data-cp="col-input">
+            <span class="conv-pg__col-label">Input</span>
+            <div class="conv-pg__grid-wrap" data-cp="input-wrap" data-hover><div class="conv-pg__grid" data-cp="input-grid"></div></div>
+            <span class="conv-pg__dims" data-cp="input-dims"></span>
+          </div>
+          <div class="conv-pg__arrow">
+            <svg width="30" height="20" viewBox="0 0 32 20" fill="none" aria-hidden="true"><path d="M2 10h26M22 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="conv-pg__col" data-cp="col-output">
+            <span class="conv-pg__col-label">Output</span>
+            <div class="conv-pg__grid-wrap" data-cp="output-wrap" data-hover><div class="conv-pg__grid" data-cp="output-grid"></div></div>
+            <span class="conv-pg__dims" data-cp="output-dims"></span>
+          </div>
+        </div>
+
+        <div class="conv-pg__legend">
+          <span><i style="background: var(--bg-elevated); border: 1px solid var(--border-subtle)"></i> input cell</span>
+          <span><i style="background: transparent; border: 1px dashed var(--border)"></i> zero-padding</span>
+          <span><i style="background: var(--accent)"></i> receptive field</span>
+          <span><i style="background: var(--accent-2)"></i> output cell</span>
+        </div>
+
+        <div class="conv-pg__viz3d">
+          <div class="conv-pg__scenes">
+            <div class="conv-pg__scene-box">
+              <span class="conv-pg__formula-label">// kernel volume</span>
+              <div class="conv-pg__scene"><div class="conv-pg__rig" data-cp="rig-kernel"></div></div>
+              <span class="conv-pg__dims" data-cp="kernel-caption"></span>
+            </div>
+            <div class="conv-pg__scene-box">
+              <span class="conv-pg__formula-label">// output volume</span>
+              <div class="conv-pg__scene"><div class="conv-pg__rig" data-cp="rig-output"></div></div>
+              <span class="conv-pg__dims" data-cp="output-caption"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="conv-pg__formulas">
+          <div class="conv-pg__formula">
+            <span class="conv-pg__formula-label">Output shape</span>
+            <div class="conv-pg__row">
+              <span class="fx">out</span><span class="feq">=</span><span class="fx">&lfloor;(in</span><span class="feq">+</span><span class="fx">2&middot;pad</span><span class="feq">&minus;</span><span class="fx">dilation&middot;(k&minus;1)</span><span class="feq">&minus;</span><span class="fx">1)/stride&rfloor;</span><span class="feq">+</span><span class="fx">1</span>
+            </div>
+            <div class="conv-pg__row" data-cp="formula-shape"></div>
+            <div class="conv-pg__chips">
+              <div class="conv-pg__chip"><span class="conv-pg__chip-label">Height</span><span class="conv-pg__chip-value" data-cp="res-oh">&mdash;</span></div>
+              <div class="conv-pg__chip"><span class="conv-pg__chip-label">Width</span><span class="conv-pg__chip-value" data-cp="res-ow">&mdash;</span></div>
+              <div class="conv-pg__chip"><span class="conv-pg__chip-label">Channels</span><span class="conv-pg__chip-value" data-cp="res-oc">&mdash;</span></div>
+            </div>
+          </div>
+
+          <div class="conv-pg__formula">
+            <span class="conv-pg__formula-label">Layer weights</span>
+            <div class="conv-pg__row">
+              <span class="fx">weights</span><span class="feq">=</span><span class="fx">C_in</span><span class="feq">&times;</span><span class="fx">k</span><span class="feq">&times;</span><span class="fx">k</span><span class="feq">&times;</span><span class="fx">C_out</span>
+            </div>
+            <div class="conv-pg__row" data-cp="formula-weights"></div>
+            <div class="conv-pg__chips">
+              <div class="conv-pg__chip"><span class="conv-pg__chip-label">Weights</span><span class="conv-pg__chip-value" data-cp="res-weights">&mdash;</span></div>
+              <div class="conv-pg__chip"><span class="conv-pg__chip-label">Biases</span><span class="conv-pg__chip-value" data-cp="res-bias">&mdash;</span></div>
+              <div class="conv-pg__chip"><span class="conv-pg__chip-label">Total params</span><span class="conv-pg__chip-value" data-cp="res-total">&mdash;</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="conv-pg__code-block">
+          <span class="conv-pg__formula-label">// the same layer in pytorch</span>
+{{- /* `nohighlight` keeps highlight.js away from the spans we maintain by hand;
+       `hljs` picks up the token colours from the site's github-dark stylesheet. */ -}}
+<pre><code class="hljs nohighlight"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+
+conv = nn.<span class="hljs-title class_">Conv2d</span>(
+    <span class="hljs-params">in_channels</span>=<span class="hljs-number" data-cp="code-cin">3</span>,
+    <span class="hljs-params">out_channels</span>=<span class="hljs-number" data-cp="code-cout">1</span>,
+    <span class="hljs-params">kernel_size</span>=<span class="hljs-number" data-cp="code-k">3</span>,
+    <span class="hljs-params">stride</span>=<span class="hljs-number" data-cp="code-s">1</span>,
+    <span class="hljs-params">padding</span>=<span class="hljs-number" data-cp="code-p">0</span>,
+    <span class="hljs-params">dilation</span>=<span class="hljs-number" data-cp="code-d">1</span>,
+    <span class="hljs-params">bias</span>=<span class="hljs-literal" data-cp="code-bias">True</span>,
+)
+
+x = torch.<span class="hljs-title function_">randn</span>(<span class="hljs-number">8</span>, <span class="hljs-number" data-cp="code-xc">3</span>, <span class="hljs-number" data-cp="code-xh">7</span>, <span class="hljs-number" data-cp="code-xw">7</span>)
+y = <span class="hljs-title function_">conv</span>(x)</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.getElementById('conv-pg-{{ .Ordinal }}');
+  if (!root) return;
+
+  var q = function (name) { return root.querySelector('[data-cp="' + name + '"]'); };
+  var KEYS = ['ih', 'iw', 'c', 'k', 's', 'p', 'd', 'f', 'speed'];
+  var SPEED_MS = { 1: 1000, 2: 600, 3: 380, 4: 220 };
+  var MIN_CELL = 8;
+
+  var state = {};
+  var inputs = {};
+  KEYS.forEach(function (key) {
+    inputs[key] = root.querySelector('[data-cp-in="' + key + '"]');
+    state[key] = parseInt(inputs[key].value, 10);
+  });
+  var biasInput = root.querySelector('[data-cp-bias]');
+  state.bias = biasInput.checked;
+
+  var stage = q('stage');
+  var playBtn = q('play');
+  var steps = [];
+  var stepIndex = 0;
+  var hovering = false;
+  var paused = false;
+  var visible = true;
+  var timer = null;
+
+  function outDim(size) {
+    return Math.floor((size + 2 * state.p - state.d * (state.k - 1) - 1) / state.s) + 1;
+  }
+
+  function buildSteps() {
+    var paddedH = state.ih + 2 * state.p;
+    var paddedW = state.iw + 2 * state.p;
+    var oh = outDim(state.ih);
+    var ow = outDim(state.iw);
+    var list = [];
+    for (var oy = 0; oy < oh; oy++) {
+      for (var ox = 0; ox < ow; ox++) {
+        var cells = [];
+        for (var kr = 0; kr < state.k; kr++) {
+          for (var kc = 0; kc < state.k; kc++) {
+            var r = oy * state.s + kr * state.d;
+            var c = ox * state.s + kc * state.d;
+            if (r < paddedH && c < paddedW) cells.push([r, c]);
+          }
+        }
+        list.push({ oy: oy, ox: ox, cells: cells });
+      }
+    }
+    return list;
+  }
+
+  /* One shared cell size for both grids, shrunk so the widest one still fits. */
+  function fitCell(paddedW, ow) {
+    var base = parseFloat(getComputedStyle(root).getPropertyValue('--cell')) || 22;
+    var gap = parseFloat(getComputedStyle(root).getPropertyValue('--gap')) || 2;
+    var avail = stage.clientWidth - 16; /* grid-wrap padding */
+    var widest = Math.max(paddedW, Math.max(ow, 1));
+    if (avail <= 0 || widest <= 0) return base;
+    var fitted = Math.floor((avail - (widest - 1) * gap) / widest);
+    return Math.max(MIN_CELL, Math.min(base, fitted));
+  }
+
+  function renderGrids() {
+    var paddedH = state.ih + 2 * state.p;
+    var paddedW = state.iw + 2 * state.p;
+    var oh = outDim(state.ih);
+    var ow = outDim(state.iw);
+    var size = fitCell(paddedW, ow) + 'px';
+
+    var inputGrid = q('input-grid');
+    inputGrid.style.gridTemplateColumns = 'repeat(' + paddedW + ', ' + size + ')';
+    inputGrid.innerHTML = '';
+    for (var r = 0; r < paddedH; r++) {
+      for (var c = 0; c < paddedW; c++) {
+        var isPad = r < state.p || r >= state.p + state.ih || c < state.p || c >= state.p + state.iw;
+        var cell = document.createElement('div');
+        cell.className = 'conv-pg__cell' + (isPad ? ' conv-pg__cell--pad' : '');
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        inputGrid.appendChild(cell);
+      }
+    }
+
+    var outputGrid = q('output-grid');
+    outputGrid.style.gridTemplateColumns = 'repeat(' + Math.max(ow, 1) + ', ' + size + ')';
+    outputGrid.innerHTML = '';
+    if (oh > 0 && ow > 0) {
+      for (var oy = 0; oy < oh; oy++) {
+        for (var ox = 0; ox < ow; ox++) {
+          var out = document.createElement('div');
+          out.className = 'conv-pg__cell';
+          out.dataset.r = oy;
+          out.dataset.c = ox;
+          outputGrid.appendChild(out);
+        }
+      }
+    }
+
+    q('input-dims').textContent = state.ih + '×' + state.iw + '×' + state.c +
+      (state.p ? ' (padded ' + paddedH + '×' + paddedW + ')' : '');
+    q('output-dims').textContent = (oh > 0 && ow > 0) ? oh + '×' + ow + '×' + state.f : 'invalid config';
+  }
+
+  /* Grids side by side or stacked? The arrow follows: rightwards or downwards. */
+  function syncArrow() {
+    stage.classList.remove('conv-pg__stage--stacked');
+    var a = q('col-input').getBoundingClientRect();
+    var b = q('col-output').getBoundingClientRect();
+    if (!a.height || !b.height) return; /* not laid out yet */
+    if (b.top > a.bottom - 1) stage.classList.add('conv-pg__stage--stacked');
+  }
+
+  function highlight(idx) {
+    root.querySelectorAll('.conv-pg__cell--active').forEach(function (el) { el.classList.remove('conv-pg__cell--active'); });
+    root.querySelectorAll('.conv-pg__cell--out').forEach(function (el) { el.classList.remove('conv-pg__cell--out'); });
+    var step = steps[idx];
+    if (!step) { q('step').textContent = 'step 0 / 0'; positionOutHighlights(); return; }
+
+    var inputGrid = q('input-grid');
+    step.cells.forEach(function (pos) {
+      var cell = inputGrid.querySelector('[data-r="' + pos[0] + '"][data-c="' + pos[1] + '"]');
+      if (cell) cell.classList.add('conv-pg__cell--active');
+    });
+    var outCell = q('output-grid').querySelector('[data-r="' + step.oy + '"][data-c="' + step.ox + '"]');
+    if (outCell) outCell.classList.add('conv-pg__cell--out');
+
+    q('step').textContent = 'step ' + (idx + 1) + ' / ' + steps.length;
+    positionOutHighlights();
+  }
+
+  function renderFormulas() {
+    var oh = outDim(state.ih);
+    var ow = outDim(state.iw);
+    q('formula-shape').innerHTML =
+      '<span class="fx">⌊(</span><span class="fnum">' + state.ih + '</span>' +
+      '<span class="feq">+</span><span class="fnum">2·' + state.p + '</span>' +
+      '<span class="feq">−</span><span class="fnum">' + state.d + '·(' + state.k + '−1)</span>' +
+      '<span class="feq">−</span><span class="fnum">1</span>' +
+      '<span class="fx">)/' + state.s + '</span><span class="feq">⌋</span>' +
+      '<span class="feq">+</span><span class="fnum">1</span>' +
+      '<span class="feq fres">= ' + (oh > 0 ? oh : '⚠') + '</span>';
+    q('res-oh').textContent = oh > 0 ? oh : '⚠';
+    q('res-ow').textContent = ow > 0 ? ow : '⚠';
+    q('res-oc').textContent = state.f;
+
+    var weights = state.c * state.k * state.k * state.f;
+    var biases = state.bias ? state.f : 0;
+    q('formula-weights').innerHTML =
+      '<span class="fnum">' + state.c + '</span><span class="feq">×</span>' +
+      '<span class="fnum">' + state.k + '</span><span class="feq">×</span>' +
+      '<span class="fnum">' + state.k + '</span><span class="feq">×</span>' +
+      '<span class="fnum">' + state.f + '</span>' +
+      '<span class="feq fres">= ' + weights.toLocaleString() + '</span>';
+    q('res-weights').textContent = weights.toLocaleString();
+    q('res-bias').textContent = biases.toLocaleString();
+    q('res-total').textContent = (weights + biases).toLocaleString();
+  }
+
+  function renderCode() {
+    q('code-cin').textContent = state.c;
+    q('code-cout').textContent = state.f;
+    q('code-k').textContent = state.k;
+    q('code-s').textContent = state.s;
+    q('code-p').textContent = state.p;
+    q('code-d').textContent = state.d;
+    q('code-bias').textContent = state.bias ? 'True' : 'False';
+    q('code-xc').textContent = state.c;
+    q('code-xh').textContent = state.ih;
+    q('code-xw').textContent = state.iw;
+  }
+
+  /* Depth spacing is a fraction of the plate, not of the per-cell unit, so a
+     stack reads as the same solid volume at every kernel size. */
+  var DEPTH_RATIO = 0.16;
+  var MAX_SLICES = 6;
+  var MAX_FILTERS = 4;
+
+  function cellLines(cellW, cellH, color) {
+    return 'repeating-linear-gradient(to right, ' + color + ' 0 1px, transparent 1px ' + cellW + 'px),' +
+           'repeating-linear-gradient(to bottom, ' + color + ' 0 1px, transparent 1px ' + cellH + 'px)';
+  }
+
+  function addPlate(parent, w, h, z, tint, alpha, extraClass) {
+    var plate = document.createElement('div');
+    plate.className = 'conv-pg__layer' + (extraClass ? ' ' + extraClass : '');
+    plate.style.width = w + 'px';
+    plate.style.height = h + 'px';
+    plate.style.transform = 'translateZ(' + z + 'px)';
+    plate.style.background = 'oklch(from var(' + tint + ') l c h / ' + alpha + ')';
+    return parent.appendChild(plate);
+  }
+
+  function renderKernelVolume() {
+    var rig = q('rig-kernel');
+    rig.innerHTML = '';
+    var plate = Math.max(40, Math.min(104, 26 + state.k * 5));
+    var cell = plate / state.k;
+    var slices = Math.min(state.c, MAX_SLICES);
+    var filters = Math.min(state.f, MAX_FILTERS);
+    var step = plate * DEPTH_RATIO;
+    var spacing = plate + 26;
+    var startX = -(filters * spacing) / 2 + spacing / 2;
+
+    for (var i = 0; i < filters; i++) {
+      var filter = document.createElement('div');
+      filter.className = 'conv-pg__filter';
+      filter.style.left = 'calc(50% + ' + (startX + i * spacing - plate / 2) + 'px)';
+      filter.style.top = 'calc(50% - ' + (plate / 2) + 'px)';
+      for (var j = 0; j < slices; j++) {
+        var el = addPlate(filter, plate, plate, j * step, '--accent', 0.42 - j * 0.05);
+        if (cell >= 3) el.style.backgroundImage = cellLines(cell, cell, 'oklch(from var(--accent) l c h / 0.5)');
+      }
+      rig.appendChild(filter);
+    }
+
+    var caption = state.f + ' filter' + (state.f > 1 ? 's' : '') +
+      ' × ' + state.c + ' channel' + (state.c > 1 ? 's' : '') +
+      ' × ' + state.k + '×' + state.k;
+    if (state.f > filters || state.c > slices) caption += ' (view capped)';
+    q('kernel-caption').textContent = caption;
+  }
+
+  /* The output volume: one plate per filter, every cell drawn, and the cell the
+     current step writes to lit on all of them at once. */
+  var outHighlights = [];
+
+  function renderOutputVolume() {
+    var rig = q('rig-output');
+    rig.innerHTML = '';
+    outHighlights = [];
+    var oh = outDim(state.ih);
+    var ow = outDim(state.iw);
+    if (oh <= 0 || ow <= 0) {
+      q('output-caption').textContent = 'invalid config';
+      return;
+    }
+
+    var cell = Math.min(11, Math.max(2, 118 / Math.max(oh, ow)));
+    var plateW = ow * cell;
+    var plateH = oh * cell;
+    var slices = Math.min(state.f, MAX_SLICES);
+    var step = Math.max(plateW, plateH) * DEPTH_RATIO;
+
+    var filter = document.createElement('div');
+    filter.className = 'conv-pg__filter';
+    filter.style.left = 'calc(50% - ' + (plateW / 2) + 'px)';
+    filter.style.top = 'calc(50% - ' + (plateH / 2) + 'px)';
+
+    for (var j = 0; j < slices; j++) {
+      var el = addPlate(filter, plateW, plateH, j * step, '--accent-2', 0.30 - j * 0.035, 'conv-pg__layer--out');
+      if (cell >= 3) el.style.backgroundImage = cellLines(cell, cell, 'oklch(from var(--accent-2) l c h / 0.45)');
+      var hl = document.createElement('div');
+      hl.className = 'conv-pg__vol-cell';
+      hl.style.width = cell + 'px';
+      hl.style.height = cell + 'px';
+      el.appendChild(hl);
+      outHighlights.push(hl);
+    }
+    rig.appendChild(filter);
+
+    q('output-caption').textContent = oh + ' × ' + ow + ' × ' + state.f +
+      (state.f > slices ? ' (view capped)' : '');
+    positionOutHighlights(cell);
+  }
+
+  function positionOutHighlights(cell) {
+    if (typeof cell === 'number') positionOutHighlights.cell = cell;
+    var size = positionOutHighlights.cell || 0;
+    var step = steps[stepIndex];
+    outHighlights.forEach(function (hl) {
+      if (!step) { hl.style.display = 'none'; return; }
+      hl.style.display = 'block';
+      hl.style.left = (step.ox * size) + 'px';
+      hl.style.top = (step.oy * size) + 'px';
+    });
+  }
+
+  function rebuild() {
+    steps = buildSteps();
+    stepIndex = 0;
+    renderGrids();
+    renderFormulas();
+    renderCode();
+    renderKernelVolume();
+    renderOutputVolume();
+    highlight(0);
+    syncArrow();
+  }
+
+  function startAuto() {
+    clearInterval(timer);
+    timer = setInterval(function () {
+      if (paused || hovering || !visible || !steps.length) return;
+      stepIndex = (stepIndex + 1) % steps.length;
+      highlight(stepIndex);
+    }, SPEED_MS[state.speed]);
+  }
+
+  playBtn.addEventListener('click', function () {
+    paused = !paused;
+    playBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+    q('play-label').textContent = paused ? 'play' : 'pause';
+    root.classList.toggle('conv-pg--paused', paused);
+  });
+
+  KEYS.forEach(function (key) {
+    inputs[key].addEventListener('input', function (e) {
+      state[key] = parseInt(e.target.value, 10);
+      if (key === 'speed') {
+        root.querySelector('[data-cp-val="speed"]').textContent = state.speed + '×';
+        startAuto();
+        return;
+      }
+      root.querySelector('[data-cp-val="' + key + '"]').textContent = state[key];
+      rebuild();
+    });
+  });
+
+  biasInput.addEventListener('change', function (e) {
+    state.bias = e.target.checked;
+    renderFormulas();
+    renderCode();
+  });
+
+  function clamp(v, max) { return Math.min(Math.max(v, 0), max); }
+
+  /* Both grids drive the same step. On the input the pointer is mapped back
+     through the stride to an output position; on the output it already is one. */
+  function trackGrid(wrapName, gridName, geometry) {
+    var wrap = q(wrapName);
+    wrap.addEventListener('mousemove', function (e) {
+      var oh = outDim(state.ih);
+      var ow = outDim(state.iw);
+      if (oh <= 0 || ow <= 0) return;
+      var rect = q(gridName).getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      var g = geometry(oh, ow);
+      var col = Math.floor((e.clientX - rect.left) / (rect.width / g.cols));
+      var row = Math.floor((e.clientY - rect.top) / (rect.height / g.rows));
+      var pos = g.toOut(row, col);
+      hovering = true;
+      stepIndex = clamp(pos.oy, oh - 1) * ow + clamp(pos.ox, ow - 1);
+      highlight(stepIndex);
+    });
+    wrap.addEventListener('mouseleave', function () { hovering = false; });
+  }
+
+  trackGrid('input-wrap', 'input-grid', function () {
+    return {
+      rows: state.ih + 2 * state.p,
+      cols: state.iw + 2 * state.p,
+      toOut: function (row, col) {
+        return { oy: Math.floor(row / state.s), ox: Math.floor(col / state.s) };
+      }
+    };
+  });
+
+  trackGrid('output-wrap', 'output-grid', function (oh, ow) {
+    return {
+      rows: oh,
+      cols: ow,
+      toOut: function (row, col) { return { oy: row, ox: col }; }
+    };
+  });
+
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+    }, { threshold: 0 }).observe(root);
+  }
+
+  if (window.ResizeObserver) {
+    var pending = false;
+    var lastWidth = 0;
+    new ResizeObserver(function (entries) {
+      /* Width is the only thing the layout depends on; ignore height echoes
+         from our own re-render so the observer cannot feed itself. */
+      var width = Math.round(entries[0].contentRect.width);
+      if (width === lastWidth || pending) return;
+      lastWidth = width;
+      pending = true;
+      requestAnimationFrame(function () {
+        pending = false;
+        renderGrids();
+        highlight(stepIndex);
+        syncArrow();
+      });
+    }).observe(stage);
+  } else {
+    window.addEventListener('resize', function () { renderGrids(); highlight(stepIndex); syncArrow(); });
+  }
+
+  rebuild();
+  startAuto();
+})();
+</script>
