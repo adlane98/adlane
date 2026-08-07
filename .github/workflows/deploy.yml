@@ -1,0 +1,63 @@
+name: Deploy to OVH
+
+on:
+  push:
+    branches: [main]
+  # Lets you deploy any branch by hand from the Actions tab, without merging.
+  workflow_dispatch:
+
+# Two overlapping FTP sessions would interleave uploads. Queue instead of
+# cancelling, so a half-finished upload is always followed by a complete one.
+concurrency:
+  group: deploy-ovh
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  HUGO_VERSION: 0.124.1
+
+jobs:
+  build-and-deploy:
+    # ubuntu-latest bills at the 1x multiplier (macOS is 10x).
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          # themes/hugo-profile is a submodule; without this the build fails
+          # with "module not found" because hugo.yaml still sets theme:.
+          submodules: recursive
+
+      - name: Install Hugo ${{ env.HUGO_VERSION }} (extended)
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          # Required: assets/css is processed through Hugo Pipes.
+          extended: true
+
+      - name: Build
+        run: hugo --minify --gc --cleanDestinationDir
+
+      - name: Sanity-check the build
+        run: |
+          test -s public/index.html || { echo "::error::no homepage was built"; exit 1; }
+          pages=$(find public -name '*.html' | wc -l)
+          echo "built $pages HTML pages"
+          [ "$pages" -gt 10 ] || { echo "::error::suspiciously few pages ($pages)"; exit 1; }
+
+      - name: Upload to OVH over FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.OVH_FTP_HOST }}
+          username: ${{ secrets.OVH_FTP_USER }}
+          password: ${{ secrets.OVH_FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./public/
+          # Absolute path, matching what FileZilla shows for the docroot.
+          # If a run fails with "directory not found", the FTP login is
+          # chrooted to /home/ynirnft and this becomes ./www/ instead.
+          server-dir: /home/ynirnft/www/
